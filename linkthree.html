@@ -777,7 +777,8 @@
             const pagesNode = shogun.db.get("pages");
             pagesNode.map().once((pageData, pageId) => {
               console.log("Loading page:", pageId, pageData);
-              if (pageData && pageData.title && pageId) {
+              // Controlla che i dati della pagina siano validi e non null/vuoti
+              if (pageData && pageData !== null && typeof pageData === "object" && pageData.title && pageId && Object.keys(pageData).length > 0) {
                 allPages.push({
                   id: pageId,
                   title: pageData.title,
@@ -967,41 +968,35 @@
 
             // Carica l'avatar se esiste usando Shogun Core
             try {
-              await shogun.db.user
-                .get("avatar")
-                .then((avatarData) => {
-                  if (avatarData) {
-                    document.getElementById("user-avatar").src = avatarData;
-                  } else {
-                    // Avatar di default con iniziali
-                    const initials = user.alias
-                      ? user.alias.substring(0, 2).toUpperCase()
-                      : "U";
-                    const defaultAvatar = `data:image/svg+xml,${encodeURIComponent(`
-                                <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="20" cy="20" r="20" fill="#4F46E5"/>
-                                    <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">${initials}</text>
-                                </svg>
-                            `)}`;
-                    document.getElementById("user-avatar").src = defaultAvatar;
-                  }
-                })
-                .catch((error) => {
-                  console.error("Error loading avatar:", error);
-                  // Fallback to default avatar
-                  const initials = user.alias
-                    ? user.alias.substring(0, 2).toUpperCase()
-                    : "U";
-                  const defaultAvatar = `data:image/svg+xml,${encodeURIComponent(`
-                                <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="20" cy="20" r="20" fill="#4F46E5"/>
-                                    <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">${initials}</text>
-                                </svg>
-                            `)}`;
+              await shogun.db.user.get("avatar").once(async (avatarData) => {
+                const initials = user.alias
+                  ? user.alias.substring(0, 2).toUpperCase()
+                  : "U";
+                const defaultAvatar = `data:image/svg+xml,${encodeURIComponent(`
+                  <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="#4F46E5"/>
+                    <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">${initials}</text>
+                  </svg>
+                `)}`;
+                
+                if (avatarData && avatarData !== null) {
+                  document.getElementById("user-avatar").src = avatarData;
+                } else {
                   document.getElementById("user-avatar").src = defaultAvatar;
-                });
+                }
+              });
             } catch (error) {
               console.error("Error loading avatar:", error);
+              const initials = user.alias
+                ? user.alias.substring(0, 2).toUpperCase()
+                : "U";
+              const defaultAvatar = `data:image/svg+xml,${encodeURIComponent(`
+                <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="20" cy="20" r="20" fill="#4F46E5"/>
+                  <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">${initials}</text>
+                </svg>
+              `)}`;
+              document.getElementById("user-avatar").src = defaultAvatar;
             }
           } else {
             document.getElementById("user-info").classList.add("hidden");
@@ -1119,7 +1114,7 @@
         // Traccia i componenti rimossi
         let removedComponents = new Set();
 
-        componentsContainer.addEventListener("click", async (e) => {
+        componentsContainer.addEventListener("click", (e) => {
           if (e.target.closest(".remove-component")) {
             const wrapper = e.target.closest(".component-wrapper");
             const componentId = wrapper.dataset.componentId;
@@ -1280,31 +1275,10 @@
                 // Rimuovi anche il componente dal database principale
                 shogun.db.get(componentId).put(null);
                 
-                // Rimuovi anche la versione con prefisso "shogun/"
-                shogun.db.get(`shogun/${componentId}`).put(null);
-                
                 console.log("Removing component from database:", componentId);
-                console.log("Also removing: shogun/" + componentId);
-                
-                // Forza la sincronizzazione con un piccolo delay
-                setTimeout(() => {
-                  // Verifica che la rimozione sia avvenuta
-                  pageNode.get("components").get(componentId).once((data) => {
-                    if (data !== null) {
-                      console.warn("Component still exists after removal, retrying:", componentId);
-                      pageNode.get("components").get(componentId).put(null);
-                      shogun.db.get(componentId).put(null);
-                      shogun.db.get(`shogun/${componentId}`).put(null);
-                    } else {
-                      console.log("Component successfully removed:", componentId);
-                    }
-                  });
-                }, 100);
               });
 
               // Poi salva i componenti attivi
-              const componentsSet = pageNode.get("components");
-
               console.log("Components to save:", components.length);
               console.log(
                 "Removed components check:",
@@ -1320,6 +1294,7 @@
                     "order:",
                     componentData.order
                   );
+                  // Salva il componente nel database principale
                   const componentNode = shogun.db.get(componentId);
                   componentNode.put(componentData, (ack) => {
                     if (ack && ack.err) {
@@ -1337,7 +1312,8 @@
                       );
                     }
                   });
-                  componentsSet.set(componentNode);
+                  // Crea un riferimento nel nodo components della pagina
+                  pageNode.get("components").get(componentId).put(componentNode);
                 } else {
                   console.log("Skipping removed component:", componentId);
                 }
@@ -1428,16 +1404,24 @@
           try {
             const pageNode = shogun.db.get("pages").get(pageId);
 
-            // Usa .on() per aggiornamenti in tempo reale del titolo
-            let titleReceived = false;
-            pageNode.get("title").on((title, key) => {
-              if (title) {
-                titleReceived = true;
+            // Usa .once() per caricare il titolo una sola volta
+            pageNode.get("title").once((title, key) => {
+              if (title && title !== null) {
                 renderedTitle.textContent = title;
                 document.title = title;
-              } else if (!titleReceived) {
-                renderedTitle.textContent = "Pagina non trovata";
-                renderedContent.innerHTML = `<p class="text-red-500 text-center">Impossibile trovare i dati per questa pagina. L'ID potrebbe essere errato o i dati non sono ancora stati sincronizzati.</p>`;
+              } else {
+                // Aspetta un secondo tentativo dopo un breve delay
+                setTimeout(() => {
+                  pageNode.get("title").once((retryTitle) => {
+                    if (retryTitle && retryTitle !== null) {
+                      renderedTitle.textContent = retryTitle;
+                      document.title = retryTitle;
+                    } else {
+                      renderedTitle.textContent = "Pagina non trovata";
+                      renderedContent.innerHTML = `<p class="text-red-500 text-center">Impossibile trovare i dati per questa pagina. L'ID potrebbe essere errato o i dati non sono ancora stati sincronizzati.</p>`;
+                    }
+                  });
+                }, 1000);
               }
             });
 
@@ -1472,7 +1456,8 @@
                 console.log("Raw component data for render:", { id, data, isNull: data === null });
                 
                 // Controlla se il componente è stato cancellato (null) o è valido
-                if (data && data !== null && typeof data === "object" && data.type) {
+                // GunDB può restituire null, undefined, o un oggetto vuoto per componenti rimossi
+                if (data && data !== null && typeof data === "object" && data.type && Object.keys(data).length > 0) {
                   componentsData.push(data);
                   console.log("Added component for render:", data.type, data);
                 } else {
@@ -1720,21 +1705,21 @@
           try {
             const pageNode = shogun.db.get("pages").get(pageId);
 
-            // Carica il titolo con timeout per aspettare la sincronizzazione
-            let titleLoaded = false;
-            const titleTimeout = setTimeout(() => {
-              if (!titleLoaded) {
-                console.warn("Timeout loading title");
-              }
-            }, 3000);
-
-            pageNode.get("title").on((title, key) => {
-              if (title && !titleLoaded) {
-                titleLoaded = true;
-                clearTimeout(titleTimeout);
+            // Carica il titolo usando .once()
+            pageNode.get("title").once((title, key) => {
+              if (title && title !== null) {
                 document.getElementById("page-title").value = title;
-                // Usa .off() per fermare l'ascolto dopo il primo caricamento
-                pageNode.get("title").off();
+              } else {
+                // Aspetta un secondo tentativo dopo un breve delay
+                setTimeout(() => {
+                  pageNode.get("title").once((retryTitle) => {
+                    if (retryTitle && retryTitle !== null) {
+                      document.getElementById("page-title").value = retryTitle;
+                    } else {
+                      console.warn("Unable to load page title");
+                    }
+                  });
+                }, 1000);
               }
             });
 
@@ -1744,11 +1729,13 @@
               .once((data, id) => {
                 console.log("Raw component data from DB:", { id, data, isNull: data === null });
                 
+                // GunDB può restituire null, undefined, o un oggetto vuoto per componenti rimossi
                 if (
                   data &&
                   data !== null &&
                   typeof data === "object" &&
                   data.type &&
+                  Object.keys(data).length > 0 &&
                   !loadedComponents.has(id)
                 ) {
                   loadedComponents.add(id);
@@ -1861,8 +1848,16 @@
           }, 1000);
         } else {
           // Solo se non c'è una pagina specifica da visualizzare
-          if (!checkAuthentication()) {
-            // Se non autenticato, mostra comunque l'editor con componenti di esempio
+          // Non mostrare il modal di autenticazione all'avvio, solo aggiungi componenti di esempio
+          try {
+            if (!shogun.isLoggedIn()) {
+              // Se non autenticato, mostra comunque l'editor con componenti di esempio
+              addComponent("h1");
+              addComponent("p");
+            }
+          } catch (error) {
+            console.error("Error checking login status:", error);
+            // Mostra comunque i componenti di esempio in caso di errore
             addComponent("h1");
             addComponent("p");
           }
