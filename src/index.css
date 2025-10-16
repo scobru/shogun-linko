@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Linktree Inspired Color Scheme */
+:root {
+  --linktree-primary: #000000;
+  --linktree-secondary: #666666;
+  --linktree-accent: #ff0066;
+  --linktree-success: #00d4aa;
+  --linktree-warning: #ffb800;
+  --linktree-surface: #ffffff;
+  --linktree-surface-variant: #f7f9fc;
+  --linktree-outline: #e5e7eb;
+  --linktree-text-primary: #000000;
+  --linktree-text-secondary: #666666;
+  --linktree-text-disabled: #9ca3af;
+  --linktree-shadow: rgba(0, 0, 0, 0.1);
+  --linktree-shadow-elevated: rgba(0, 0, 0, 0.05);
+  --linktree-background: #f7f9fc;
+}
+
+/* Dark mode colors */
+[data-theme="dark"] {
+  --linktree-primary: #ffffff;
+  --linktree-secondary: #a1a1aa;
+  --linktree-surface: #1a1a1a;
+  --linktree-surface-variant: #262626;
+  --linktree-outline: #404040;
+  --linktree-text-primary: #ffffff;
+  --linktree-text-secondary: #a1a1aa;
+  --linktree-text-disabled: #71717a;
+  --linktree-shadow: rgba(0, 0, 0, 0.3);
+  --linktree-shadow-elevated: rgba(0, 0, 0, 0.15);
+  --linktree-background: #0a0a0a;
+}
+
+body {
+  background-color: var(--linktree-background);
+  color: var(--linktree-text-primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--linktree-surface-variant);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--linktree-outline);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--linktree-secondary);
+}
+
+/* Contenteditable placeholder */
+[contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  color: var(--linktree-text-secondary);
+  font-style: italic;
+}
+
+/* Component wrapper hover effects */
+.component-wrapper:hover .component-controls {
+  opacity: 1 !important;
+}
+
+.component-wrapper {
+  position: relative;
+}
+
+.component-controls {
+  transition: opacity 0.2s ease;
+}
+
+/* Smooth transitions */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  /* Reduce font sizes on mobile */
+  .text-3xl {
+    font-size: 1.5rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem;
+  }
+  
+  /* Better spacing on mobile */
+  .space-y-4 > * + * {
+    margin-top: 0.75rem;
+  }
+  
+  /* Smaller gaps */
+  .gap-4 {
+    gap: 0.5rem;
+  }
+  
+  /* Better button spacing */
+  .flex-wrap {
+    gap: 0.5rem;
+  }
+}
+
+/* Better touch targets on mobile */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
