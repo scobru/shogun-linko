@@ -132,7 +132,7 @@ export default function AboutPage() {
                     className="text-sm hover:underline"
                     style={{ color: 'var(--linktree-primary)' }}
                   >
-                    github.com/scobru/shogun-linkthree
+                    github.com/scobru/shogun-linko
                   </a>
                 </div>
               </div>
