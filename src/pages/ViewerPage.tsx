@@ -267,7 +267,7 @@ export default function ViewerPage({
         {/* Navigation Footer */}
         {allPages.length > 1 && (
           <footer
-            className="fixed bottom-0 left-0 right-0 py-2 sm:py-3 px-2 sm:px-4 border-t z-50"
+            className="fixed bottom-0 left-0 right-0 py-2 sm:py-3 px-2 sm:px-4 border-t z-40"
             style={{
               backgroundColor: 'var(--linktree-surface)',
               borderColor: 'var(--linktree-outline)',

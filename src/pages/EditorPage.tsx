@@ -425,7 +425,7 @@ export default function EditorPage({
   };
 
   return (
-    <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl ${allPages.length > 1 ? 'pb-20' : ''}`}>
+    <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl ${allPages.length > 1 ? 'pb-32' : ''}`}>
       <Header
         currentUser={currentUser}
         isLoggedIn={isLoggedIn}
@@ -783,7 +783,56 @@ export default function EditorPage({
         </footer>
       )}
 
-      <Footer />
+      {/* Footer fixed below navigation */}
+      {allPages.length > 1 && (
+        <footer
+          className="fixed left-0 right-0 py-2 border-t z-30"
+          style={{
+            backgroundColor: 'var(--linktree-surface-variant)',
+            borderColor: 'var(--linktree-outline)',
+            backdropFilter: 'blur(12px)',
+            bottom: '60px' // Position above navigation
+          }}
+        >
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-center text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
+              <a
+                href="https://github.com/scobru/shogun-linkthree"
+                className="hover:opacity-80 transition mr-2"
+                style={{ color: 'var(--linktree-primary)' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('footer.repo')}
+              </a>
+              <span className="mx-2">-</span>
+              <span className="mr-1">{t('footer.builtWith')}</span>
+              <a
+                href="https://github.com/scobru"
+                className="hover:opacity-80 transition mr-2"
+                style={{ color: 'var(--linktree-primary)' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                scobru
+              </a>
+              <span className="mx-2">-</span>
+              <span className="mr-1">{t('footer.partOf')}</span>
+              <a
+                href="https://shogun-info.vercel.app"
+                className="hover:opacity-80 transition"
+                style={{ color: 'var(--linktree-primary)' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('footer.shogunProject')}
+              </a>
+            </div>
+          </div>
+        </footer>
+      )}
+      
+      {allPages.length <= 1 && <Footer />}
     </div>
   );
 }
