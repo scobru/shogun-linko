@@ -5,6 +5,7 @@ import { useDisclaimer } from './hooks/useDisclaimer';
 import EditorPage from './pages/EditorPage';
 import ViewerPage from './pages/ViewerPage';
 import MyPagesPage from './pages/MyPagesPage';
+import AboutPage from './pages/AboutPage';
 import LegacyRedirect from './components/shared/LegacyRedirect';
 import Disclaimer from './components/shared/Disclaimer';
 
@@ -39,6 +40,7 @@ function App() {
       <Routes>
         <Route path="/" element={<EditorPage {...shogunContext} {...themeContext} />} />
         <Route path="/my-pages" element={<MyPagesPage {...shogunContext} {...themeContext} />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/view/:pageId" element={<ViewerPage {...shogunContext} {...themeContext} />} />
         {/* Catch-all route for custom slugs - must be last */}
         <Route path="/:slug" element={<ViewerPage {...shogunContext} {...themeContext} />} />

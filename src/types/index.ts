@@ -25,6 +25,7 @@ export interface ComponentData {
   html?: string;
   css?: string;
   js?: string;
+  audioUrl?: string;
   deleted?: boolean;
   deletedAt?: number;
 }
@@ -36,7 +37,8 @@ export type ComponentType =
   | 'avatar'
   | 'link'
   | 'spacer'
-  | 'code';
+  | 'code'
+  | 'audio';
 
 export interface UserInfo {
   sea: {

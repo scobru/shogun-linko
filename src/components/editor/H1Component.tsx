@@ -85,7 +85,7 @@ export default function H1Component({
         className={`text-2xl font-semibold focus:outline-none w-full text-${data.alignment || 'center'}`}
         style={{ color: 'var(--linktree-text-primary)' }}
         dangerouslySetInnerHTML={{ __html: data.content || '' }}
-        placeholder={t('components.h1.placeholder')}
+        data-placeholder={t('components.h1.placeholder')}
       />
     </div>
   );

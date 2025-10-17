@@ -80,7 +80,7 @@ export default function ParagraphComponent({
         className={`text-base focus:outline-none w-full text-${data.alignment || 'justify'}`}
         style={{ color: 'var(--linktree-text-secondary)' }}
         dangerouslySetInnerHTML={{ __html: data.content || '' }}
-        placeholder={t('components.paragraph.placeholder')}
+        data-placeholder={t('components.paragraph.placeholder')}
       />
     </div>
   );

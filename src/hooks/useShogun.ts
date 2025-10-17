@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ShogunCoreInstance, UserInfo } from '../types';
 import { ShogunCore } from 'shogun-core';
+import { forceListUpdate } from 'gun-relays';
 
 declare global {
   interface Window {
@@ -14,13 +15,14 @@ export const useShogun = () => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-      const shogunInstance = new ShogunCore({
-        gunOptions: {
-          peers: [
-            'https://peer.wallie.io/gun',
-            'https://v5g5jseqhgkp43lppgregcfbvi.srv.us/gun',
-            'https://relay.shogun-eco.xyz/gun',
-          ],
+    // Initialize Shogun with relay list
+    const initShogun = async () => {
+      try {
+        const freshRelays = await forceListUpdate();
+        
+        const shogunInstance = new ShogunCore({
+          gunOptions: {
+            peers: freshRelays,
           localStorage: true,
           multicast: false,
           radisk: true,
@@ -49,7 +51,41 @@ export const useShogun = () => {
 
       // Check for existing session
       checkExistingSession(shogunInstance);
+      } catch (error) {
+        console.error('Error initializing Shogun:', error);
+        // Fallback to default peers if relay fetch fails
+        const shogunInstance = new ShogunCore({
+          gunOptions: {
+            peers: ['https://relay.peer.ooo/gun', 'https://peer.wallie.io/gun'],
+            localStorage: true,
+            multicast: false,
+            radisk: true,
+            wire: true,
+            rtc: {
+              iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun.cloudflare.com:3478' },
+                { urls: 'stun:stun.services.mozilla.com' },
+              ],
+              dataChannel: { ordered: false, maxRetransmits: 2 },
+              sdp: {
+                mandatory: {
+                  OfferToReceiveAudio: false,
+                  OfferToReceiveVideo: false,
+                },
+              },
+              max: 55,
+              room: 'linkthree-webring',
+            },
+          },
+        });
+        setShogun(shogunInstance);
+        setIsInitialized(true);
+        checkExistingSession(shogunInstance);
+      }
+    };
     
+    initShogun();
   }, []);
 
   const checkExistingSession = useCallback((shogunInstance: ShogunCoreInstance) => {

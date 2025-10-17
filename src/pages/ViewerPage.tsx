@@ -217,7 +217,7 @@ export default function ViewerPage({
   }
 
   return (
-    <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl pb-24">
+    <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl pb-64">
       <Header
         currentUser={currentUser}
         isLoggedIn={isLoggedIn}

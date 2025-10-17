@@ -10,12 +10,14 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "gun-relays": "^1.0.2",
     "i18next": "^25.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^16.0.1",
     "react-router-dom": "^6.21.0",
-    "shogun-core": "^3.3.7"
+    "shogun-core": "^3.3.7",
+    "vercel": "^48.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -24,12 +26,24 @@
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.1",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "events": "^3.3.0",
+    "https-browserify": "^1.0.0",
+    "path-browserify": "^1.0.1",
     "postcss": "^8.4.32",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "url": "^0.11.4",
+    "util": "^0.12.5",
+    "vite": "^5.0.8",
+    "vite-plugin-node-polyfills": "^0.24.0"
   }
 }

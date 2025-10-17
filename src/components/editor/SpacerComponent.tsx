@@ -8,7 +8,6 @@ interface SpacerComponentProps {
 }
 
 export default function SpacerComponent({
-  data,
   onMoveUp,
   onMoveDown,
   onRemove,

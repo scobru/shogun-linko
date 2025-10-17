@@ -1,6 +1,8 @@
-# Shogun LinkThree - React + TypeScript Edition
+# Linko
 
 A modern, Linktree-style page builder powered by GunDB and Shogun Core, built with React, TypeScript, and Vite.
+
+part of the [Shogun](https://shogun-eco.xyz) ecosystem.
 
 ## Features
 
@@ -18,7 +20,7 @@ A modern, Linktree-style page builder powered by GunDB and Shogun Core, built wi
 - **Routing**: React Router v6
 - **Styling**: TailwindCSS + CSS Variables
 - **i18n**: react-i18next (IT/EN)
-- **Database**: GunDB via Shogun Core
+- **Database**: GunDB via [Shogun Core](https://github.com/scobru/shogun-core)
 - **Build Tool**: Vite
 - **Icons**: Font Awesome 6
 
@@ -32,21 +34,25 @@ A modern, Linktree-style page builder powered by GunDB and Shogun Core, built wi
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 yarn install
 ```
 
 2. Start the development server:
+
 ```bash
 yarn dev
 ```
 
 3. Build for production:
+
 ```bash
 yarn build
 ```
 
 4. Preview production build:
+
 ```bash
 yarn preview
 ```
@@ -93,32 +99,6 @@ The app supports **Italian** 🇮🇹 and **English** 🇬🇧:
 
 See `I18N.md` for full documentation.
 
-## Development Notes
-
-### Legacy Files
-
-The following files contain the original implementation and can be used as reference:
-- `linkthree.html` - Original HTML structure
-- `linkthree.js` - Original JavaScript logic (2,840 lines)
-- `linkthree.css` - Original CSS styles
-
-### Migration Status
-
-- ✅ Basic project structure
-- ✅ Vite + React + TypeScript setup
-- ✅ TailwindCSS integration
-- ✅ Shogun Core hook
-- ✅ Theme management hook
-- ✅ Basic routing setup
-- ✅ Authentication modal
-- ✅ Component editor (H1, P, Image, Avatar, Link, Spacer, Code)
-- ✅ Component renderer
-- ✅ Page persistence (save/load)
-- ✅ Navigation between pages (prev/next/random)
-- ✅ Code templates (MySpace, GeoCities, Marquee, Guestbook, HitCounter, Rainbow, Matrix)
-- ✅ Delete page functionality
-- 🚧 Drag & drop (pending - can be added)
-
 ## Contributing
 
 This is part of the Shogun ecosystem. Follow the main project's contribution guidelines.
@@ -126,4 +106,3 @@ This is part of the Shogun ecosystem. Follow the main project's contribution gui
 ## License
 
 See the main Shogun project for license information.
-

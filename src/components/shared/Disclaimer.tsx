@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface DisclaimerProps {
   onAgree: () => void;
@@ -6,6 +7,7 @@ interface DisclaimerProps {
 
 export default function Disclaimer({ onAgree }: DisclaimerProps) {
   const { t } = useTranslation();
+  const { language, toggleLanguage } = useLanguage();
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
@@ -18,6 +20,22 @@ export default function Disclaimer({ onAgree }: DisclaimerProps) {
         }}
       >
         <div className="text-center mb-6">
+          <div className="flex justify-between items-start mb-4">
+            <div></div>
+            <button
+              onClick={toggleLanguage}
+              className="px-3 py-2 border rounded-full hover:bg-gray-50 transition font-medium text-sm"
+              style={{
+                backgroundColor: 'var(--linktree-surface-variant)',
+                color: 'var(--linktree-text-primary)',
+                borderColor: 'var(--linktree-outline)',
+              }}
+              title={language === 'en' ? 'Passa all\'italiano' : 'Switch to English'}
+            >
+              <i className="fas fa-language mr-1"></i>
+              <span className="font-bold">{language.toUpperCase()}</span>
+            </button>
+          </div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--linktree-text-primary)' }}>
             {t('disclaimer.title')}
           </h1>

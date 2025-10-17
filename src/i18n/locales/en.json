@@ -6,6 +6,7 @@
     "hello": "Hi, {{name}}!",
     "myPages": "My Pages",
     "newPage": "New Page",
+    "about": "About",
     "edit": "Edit",
     "delete": "Delete",
     "theme": {
@@ -28,7 +29,8 @@
       "profile": "Profile",
       "link": "Link",
       "space": "Space",
-      "code": "Code"
+      "code": "Code",
+      "audio": "Audio"
     },
     "savePage": "Save Page",
     "saving": "Saving...",
@@ -175,6 +177,17 @@
       "preview": "Preview:",
       "previewPlaceholder": "The preview will appear here..."
     },
+    "audio": {
+      "title": "Audio Component",
+      "urlLabel": "Audio URL",
+      "urlPlaceholder": "https://example.com/audio.mp3",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Audio title",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Brief description of the audio",
+      "preview": "Preview:",
+      "browserNotSupported": "Your browser does not support the audio element."
+    },
     "controls": {
       "moveUp": "Move up",
       "moveDown": "Move down",
@@ -194,7 +207,13 @@
     "builtWith": "built with ❤️ by",
     "repo": "repo",
     "partOf": "part of",
-    "shogunProject": "shogun project"
+    "shogunProject": "shogun project",
+    "mobile": {
+      "builtWith": "❤️",
+      "repo": "repo",
+      "partOf": "",
+      "shogunProject": "shogun"
+    }
   },
   "common": {
     "or": "or",
@@ -212,6 +231,49 @@
     "error": "Error",
     "success": "Success",
     "warning": "Warning"
+  },
+  "about": {
+    "title": "About LINKO",
+    "subtitle": "Decentralized Link-in-Bio Platform",
+    "what": {
+      "title": "What is LINKO?",
+      "description": "LINKO is a decentralized, privacy-focused link-in-bio platform built on GunDB. Unlike traditional platforms, LINKO gives you complete control over your data through peer-to-peer technology. Create beautiful, customizable pages without relying on centralized servers."
+    },
+    "features": {
+      "title": "Key Features",
+      "decentralized": {
+        "title": "Decentralized",
+        "description": "Your data is stored across a peer-to-peer network, not on centralized servers. You own your content."
+      },
+      "authenticated": {
+        "title": "User Authentication",
+        "description": "Secure user authentication and account management using SEA (Security, Encryption, Authorization) technology."
+      },
+      "privacy": {
+        "title": "Privacy First",
+        "description": "No tracking, no analytics, no data collection. Your privacy is our priority."
+      },
+      "opensource": {
+        "title": "Open Source",
+        "description": "Fully open source and transparent. Inspect, modify, and contribute to the code."
+      }
+    },
+    "tech": {
+      "title": "Technology Stack"
+    },
+    "project": {
+      "title": "About the Project",
+      "repository": "Repository",
+      "developer": "Developer",
+      "partof": "Part of",
+      "shogun": "Shogun Project - Decentralized Tools Ecosystem",
+      "support": "Support Development",
+      "cryptoDonations": "Crypto Donations"
+    },
+    "license": {
+      "title": "License",
+      "description": "LINKO is released under the MIT License. You are free to use, modify, and distribute this software. This is experimental technology provided \"as is\" without warranties. Use at your own risk."
+    }
   }
 }
 

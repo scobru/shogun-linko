@@ -7,7 +7,6 @@ import { useUserAvatar } from '../hooks/useUserAvatar';
 import { slugify, isValidSlug, isSlugAvailable } from '../utils/slugify';
 import Header from '../components/shared/Header';
 import AuthModal from '../components/shared/AuthModal';
-import Footer from '../components/shared/Footer';
 import ComponentWrapper from '../components/editor/ComponentWrapper';
 
 interface EditorPageProps {
@@ -108,6 +107,10 @@ export default function EditorPage({
       newComponent.content = '';
     } else if (type === 'spacer') {
       newComponent.height = '16px';
+    } else if (type === 'audio') {
+      newComponent.audioUrl = '';
+      newComponent.title = '';
+      newComponent.description = '';
     }
 
     setComponents([...components, newComponent]);
@@ -425,7 +428,7 @@ export default function EditorPage({
   };
 
   return (
-    <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl ${allPages.length > 1 ? 'pb-32' : ''}`}>
+    <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl pb-20`}>
       <Header
         currentUser={currentUser}
         isLoggedIn={isLoggedIn}
@@ -607,7 +610,7 @@ export default function EditorPage({
               </button>
               <button
                 onClick={() => addComponent('code')}
-                className="px-4 py-3 font-medium rounded-xl hover:bg-gray-100 transition text-sm border col-span-2"
+                className="px-4 py-3 font-medium rounded-xl hover:bg-gray-100 transition text-sm border"
                 style={{
                   backgroundColor: 'var(--linktree-surface-variant)',
                   color: 'var(--linktree-text-primary)',
@@ -615,6 +618,17 @@ export default function EditorPage({
                 }}
               >
                 <i className="fas fa-code mr-2"></i>{t('editor.components.code')}
+              </button>
+              <button
+                onClick={() => addComponent('audio')}
+                className="px-4 py-3 font-medium rounded-xl hover:bg-gray-100 transition text-sm border"
+                style={{
+                  backgroundColor: 'var(--linktree-surface-variant)',
+                  color: 'var(--linktree-text-primary)',
+                  borderColor: 'var(--linktree-outline)',
+                }}
+              >
+                <i className="fas fa-music mr-2"></i>{t('editor.components.audio')}
               </button>
             </div>
 
@@ -724,19 +738,20 @@ export default function EditorPage({
       {/* Navigation Footer */}
       {allPages.length > 1 && (
         <footer
-          className="fixed bottom-0 left-0 right-0 py-2 sm:py-3 px-2 sm:px-4 border-t z-40"
+          className="fixed left-0 right-0 py-1  border-t z-40"
           style={{
             backgroundColor: 'var(--linktree-surface)',
             borderColor: 'var(--linktree-outline)',
             backdropFilter: 'blur(12px)',
+            bottom: '0'
           }}
         >
           <div className="container mx-auto max-w-4xl">
-            <div className="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
+            <div className="flex justify-center items-center gap-1 sm:gap-2 flex-wrap">
               <button
                 onClick={navigateToPrevious}
                 disabled={currentPageIndex <= 0}
-                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
+                className="px-1 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
                 style={{
                   backgroundColor: 'var(--linktree-surface-variant)',
                   color: 'var(--linktree-text-primary)',
@@ -749,7 +764,7 @@ export default function EditorPage({
               </button>
               <button
                 onClick={navigateToRandom}
-                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm"
+                className="px-1 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm"
                 style={{
                   backgroundColor: 'var(--linktree-warning)',
                   color: 'var(--linktree-text-primary)',
@@ -762,7 +777,7 @@ export default function EditorPage({
               <button
                 onClick={navigateToNext}
                 disabled={currentPageIndex >= allPages.length - 1}
-                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
+                className="px-1 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
                 style={{
                   backgroundColor: 'var(--linktree-surface-variant)',
                   color: 'var(--linktree-text-primary)',
@@ -774,7 +789,7 @@ export default function EditorPage({
                 <i className="fas fa-arrow-right ml-1 sm:ml-2"></i>
               </button>
               {currentPageIndex >= 0 && (
-                <span className="text-xs sm:text-sm ml-2 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
+                <span className="text-xs sm:text-sm ml-1 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
                   {t('viewer.navigation.ofPages', { current: currentPageIndex + 1, total: allPages.length })}
                 </span>
               )}
@@ -783,56 +798,6 @@ export default function EditorPage({
         </footer>
       )}
 
-      {/* Footer fixed below navigation */}
-      {allPages.length > 1 && (
-        <footer
-          className="fixed left-0 right-0 py-2 border-t z-30"
-          style={{
-            backgroundColor: 'var(--linktree-surface-variant)',
-            borderColor: 'var(--linktree-outline)',
-            backdropFilter: 'blur(12px)',
-            bottom: '60px' // Position above navigation
-          }}
-        >
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
-              <a
-                href="https://github.com/scobru/shogun-linkthree"
-                className="hover:opacity-80 transition mr-2"
-                style={{ color: 'var(--linktree-primary)' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('footer.repo')}
-              </a>
-              <span className="mx-2">-</span>
-              <span className="mr-1">{t('footer.builtWith')}</span>
-              <a
-                href="https://github.com/scobru"
-                className="hover:opacity-80 transition mr-2"
-                style={{ color: 'var(--linktree-primary)' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                scobru
-              </a>
-              <span className="mx-2">-</span>
-              <span className="mr-1">{t('footer.partOf')}</span>
-              <a
-                href="https://shogun-info.vercel.app"
-                className="hover:opacity-80 transition"
-                style={{ color: 'var(--linktree-primary)' }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('footer.shogunProject')}
-              </a>
-            </div>
-          </div>
-        </footer>
-      )}
-      
-      {allPages.length <= 1 && <Footer />}
     </div>
   );
 }

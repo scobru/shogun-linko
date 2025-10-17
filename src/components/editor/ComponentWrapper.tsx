@@ -6,6 +6,7 @@ import LinkComponent from './LinkComponent';
 import AvatarComponent from './AvatarComponent';
 import SpacerComponent from './SpacerComponent';
 import CodeComponent from './CodeComponent';
+import AudioComponent from './AudioComponent';
 
 interface ComponentWrapperProps {
   component: ComponentData;
@@ -53,6 +54,8 @@ export default function ComponentWrapper({
       return <SpacerComponent {...commonProps} />;
     case 'code':
       return <CodeComponent {...commonProps} />;
+    case 'audio':
+      return <AudioComponent {...commonProps} />;
     default:
       return null;
   }

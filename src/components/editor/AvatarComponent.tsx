@@ -96,7 +96,7 @@ export default function AvatarComponent({
             className="text-xl font-semibold focus:outline-none w-full mb-1 text-center"
             style={{ color: 'var(--linktree-text-primary)' }}
             dangerouslySetInnerHTML={{ __html: data.name || '' }}
-            placeholder={t('components.avatar.namePlaceholder')}
+            data-placeholder={t('components.avatar.namePlaceholder')}
           />
           <div
             contentEditable
@@ -105,7 +105,7 @@ export default function AvatarComponent({
             className="text-sm focus:outline-none w-full text-center"
             style={{ color: 'var(--linktree-text-secondary)' }}
             dangerouslySetInnerHTML={{ __html: data.description || '' }}
-            placeholder={t('components.avatar.descriptionPlaceholder')}
+            data-placeholder={t('components.avatar.descriptionPlaceholder')}
           />
         </div>
       </div>

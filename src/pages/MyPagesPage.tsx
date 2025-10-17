@@ -146,7 +146,7 @@ export default function MyPagesPage({
         <div className="mb-6">
           <button
             onClick={() => navigate('/')}
-            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition shadow-md text-sm sm:text-base"
+            className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600  font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition shadow-md text-sm sm:text-base"
           >
             <i className="fas fa-plus mr-2"></i>
             {t('myPages.createNew')}
@@ -247,10 +247,7 @@ export default function MyPagesPage({
                     <button
                       onClick={() => navigate(getPageUrl(page))}
                       className="px-3 sm:px-4 py-1 sm:py-2 rounded-lg font-medium transition text-xs sm:text-sm"
-                      style={{
-                        backgroundColor: 'var(--linktree-primary)',
-                        color: 'white',
-                      }}
+                      
                     >
                       <i className="fas fa-eye mr-1 sm:mr-2"></i>
                       <span className="hidden sm:inline">{t('myPages.view')}</span>

@@ -167,6 +167,32 @@ export default function RenderedComponent({ component }: RenderedComponentProps)
     case 'code':
       return <div ref={codeRef} className="code-component mb-4" />;
 
+    case 'audio':
+      return component.audioUrl ? (
+        <div className="mb-4 text-center">
+          <audio
+            controls
+            className="w-full max-w-md mx-auto rounded-lg shadow-sm"
+            style={{ backgroundColor: 'var(--linktree-surface)' }}
+          >
+            <source src={component.audioUrl} type="audio/mpeg" />
+            <source src={component.audioUrl} type="audio/wav" />
+            <source src={component.audioUrl} type="audio/ogg" />
+            Your browser does not support the audio element.
+          </audio>
+          {component.title && (
+            <h3 className="text-lg font-semibold mt-2" style={{ color: 'var(--linktree-text-primary)' }}>
+              {component.title}
+            </h3>
+          )}
+          {component.description && (
+            <p className="text-sm mt-1" style={{ color: 'var(--linktree-text-secondary)' }}>
+              {component.description}
+            </p>
+          )}
+        </div>
+      ) : null;
+
     default:
       return null;
   }
