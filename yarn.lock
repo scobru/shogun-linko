@@ -2794,10 +2794,9 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-gun-relays@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/gun-relays/-/gun-relays-1.0.2.tgz#0e674a3877ad087505354f0b5dd4b23a48e78bee"
-  integrity sha512-OObVOIfnPAaurzCS+LsiDYLV7m3bxPRYw9ldV93LsbbuhoUsH0Kad/4xy+QYdC/PBskk8YQUuondElMkTnYMEw==
+"gun-relays@git+https://github.com/scobru/shogun-relays.git":
+  version "1.0.1"
+  resolved "git+https://github.com/scobru/shogun-relays.git#366a6bd3a4c31ff3eba987ad51b1bc45735daf1f"
   dependencies:
     get-urls "^10.0.1"
     gun "^0.2020.1235"

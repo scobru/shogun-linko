@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "gun-relays": "^1.0.2",
+    "gun-relays": "git+https://github.com/scobru/shogun-relays.git",
     "i18next": "^25.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

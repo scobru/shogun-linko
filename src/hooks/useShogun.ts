@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { ShogunCoreInstance, UserInfo } from '../types';
-import { ShogunCore } from 'shogun-core';
+import { useState, useEffect, useCallback } from "react";
+import type { ShogunCoreInstance, UserInfo } from "../types";
+import { ShogunCore } from "shogun-core";
 import { forceListUpdate } from 'gun-relays';
 
 declare global {
@@ -19,53 +19,21 @@ export const useShogun = () => {
     const initShogun = async () => {
       try {
         const freshRelays = await forceListUpdate();
+
+        console.log("freshRelays", freshRelays);
         
         const shogunInstance = new ShogunCore({
           gunOptions: {
             peers: freshRelays,
-          localStorage: true,
-          multicast: false,
-          radisk: true,
-          wire: true,
-          rtc: {
-            iceServers: [
-              { urls: 'stun:stun.l.google.com:19302' },
-              { urls: 'stun:stun.cloudflare.com:3478' },
-              { urls: 'stun:stun.services.mozilla.com' },
-            ],
-            dataChannel: { ordered: false, maxRetransmits: 2 },
-            sdp: {
-              mandatory: {
-                OfferToReceiveAudio: false,
-                OfferToReceiveVideo: false,
-              },
-            },
-            max: 55,
-            room: 'linkthree-webring',
-          },
-        },
-      });
-
-      setShogun(shogunInstance);
-      setIsInitialized(true);
-
-      // Check for existing session
-      checkExistingSession(shogunInstance);
-      } catch (error) {
-        console.error('Error initializing Shogun:', error);
-        // Fallback to default peers if relay fetch fails
-        const shogunInstance = new ShogunCore({
-          gunOptions: {
-            peers: ['https://relay.peer.ooo/gun', 'https://peer.wallie.io/gun'],
             localStorage: true,
             multicast: false,
             radisk: true,
             wire: true,
             rtc: {
               iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun.cloudflare.com:3478' },
-                { urls: 'stun:stun.services.mozilla.com' },
+                { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun.cloudflare.com:3478" },
+                { urls: "stun:stun.services.mozilla.com" },
               ],
               dataChannel: { ordered: false, maxRetransmits: 2 },
               sdp: {
@@ -75,7 +43,41 @@ export const useShogun = () => {
                 },
               },
               max: 55,
-              room: 'linkthree-webring',
+              room: "linkthree-webring",
+            },
+          },
+        });
+
+        setShogun(shogunInstance);
+        setIsInitialized(true);
+
+        // Check for existing session
+        checkExistingSession(shogunInstance);
+      } catch (error) {
+        console.error("Error initializing Shogun:", error);
+        // Fallback to default peers if relay fetch fails
+        const shogunInstance = new ShogunCore({
+          gunOptions: {
+            peers: ["https://relay.peer.ooo/gun", "https://peer.wallie.io/gun"],
+            localStorage: true,
+            multicast: false,
+            radisk: true,
+            wire: true,
+            rtc: {
+              iceServers: [
+                { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun.cloudflare.com:3478" },
+                { urls: "stun:stun.services.mozilla.com" },
+              ],
+              dataChannel: { ordered: false, maxRetransmits: 2 },
+              sdp: {
+                mandatory: {
+                  OfferToReceiveAudio: false,
+                  OfferToReceiveVideo: false,
+                },
+              },
+              max: 55,
+              room: "linkthree-webring",
             },
           },
         });
@@ -84,42 +86,45 @@ export const useShogun = () => {
         checkExistingSession(shogunInstance);
       }
     };
-    
+
     initShogun();
   }, []);
 
-  const checkExistingSession = useCallback((shogunInstance: ShogunCoreInstance) => {
-    try {
-      const savedPub = localStorage.getItem('currentUserPub');
-      const savedAlias = localStorage.getItem('currentUserAlias');
+  const checkExistingSession = useCallback(
+    (shogunInstance: ShogunCoreInstance) => {
+      try {
+        const savedPub = localStorage.getItem("currentUserPub");
+        const savedAlias = localStorage.getItem("currentUserAlias");
 
-      if (savedPub) {
-        setCurrentUser({
-          sea: { pub: savedPub },
-          alias: savedAlias || savedPub.substring(0, 8) + '...',
-          pub: savedPub,
-        });
-      } else if (shogunInstance.isLoggedIn()) {
-        const user = shogunInstance.getCurrentUser();
-        if (user) {
-          const userInfo: UserInfo = {
-            sea: { pub: user.pub },
-            alias: user.username,
-            pub: user.pub,
-          };
-          setCurrentUser(userInfo);
-          localStorage.setItem('currentUserPub', user.pub);
-          localStorage.setItem('currentUserAlias', user.username || '');
+        if (savedPub) {
+          setCurrentUser({
+            sea: { pub: savedPub },
+            alias: savedAlias || savedPub.substring(0, 8) + "...",
+            pub: savedPub,
+          });
+        } else if (shogunInstance.isLoggedIn()) {
+          const user = shogunInstance.getCurrentUser();
+          if (user) {
+            const userInfo: UserInfo = {
+              sea: { pub: user.pub },
+              alias: user.username,
+              pub: user.pub,
+            };
+            setCurrentUser(userInfo);
+            localStorage.setItem("currentUserPub", user.pub);
+            localStorage.setItem("currentUserAlias", user.username || "");
+          }
         }
+      } catch (error) {
+        console.error("Error checking session:", error);
       }
-    } catch (error) {
-      console.error('Error checking session:', error);
-    }
-  }, []);
+    },
+    []
+  );
 
   const login = useCallback(
     async (username: string, password: string) => {
-      if (!shogun) return { success: false, error: 'Shogun not initialized' };
+      if (!shogun) return { success: false, error: "Shogun not initialized" };
 
       try {
         const result = await shogun.login(username, password);
@@ -131,15 +136,15 @@ export const useShogun = () => {
             pub: result.userPub,
           };
           setCurrentUser(userInfo);
-          localStorage.setItem('currentUserPub', result.userPub);
-          localStorage.setItem('currentUserAlias', result.username || '');
+          localStorage.setItem("currentUserPub", result.userPub);
+          localStorage.setItem("currentUserAlias", result.username || "");
           return { success: true };
         } else {
           return { success: false, error: result.error };
         }
       } catch (error) {
-        console.error('Login error:', error);
-        return { success: false, error: 'Login failed' };
+        console.error("Login error:", error);
+        return { success: false, error: "Login failed" };
       }
     },
     [shogun]
@@ -147,7 +152,7 @@ export const useShogun = () => {
 
   const signUp = useCallback(
     async (username: string, password: string) => {
-      if (!shogun) return { success: false, error: 'Shogun not initialized' };
+      if (!shogun) return { success: false, error: "Shogun not initialized" };
 
       try {
         const result = await shogun.signUp(username, password);
@@ -159,15 +164,15 @@ export const useShogun = () => {
             pub: result.userPub,
           };
           setCurrentUser(userInfo);
-          localStorage.setItem('currentUserPub', result.userPub);
-          localStorage.setItem('currentUserAlias', result.username || '');
+          localStorage.setItem("currentUserPub", result.userPub);
+          localStorage.setItem("currentUserAlias", result.username || "");
           return { success: true };
         } else {
           return { success: false, error: result.error };
         }
       } catch (error) {
-        console.error('Sign up error:', error);
-        return { success: false, error: 'Sign up failed' };
+        console.error("Sign up error:", error);
+        return { success: false, error: "Sign up failed" };
       }
     },
     [shogun]
@@ -178,12 +183,12 @@ export const useShogun = () => {
       try {
         shogun.logout();
       } catch (error) {
-        console.error('Logout error:', error);
+        console.error("Logout error:", error);
       }
     }
     setCurrentUser(null);
-    localStorage.removeItem('currentUserPub');
-    localStorage.removeItem('currentUserAlias');
+    localStorage.removeItem("currentUserPub");
+    localStorage.removeItem("currentUserAlias");
   }, [shogun]);
 
   return {
@@ -196,4 +201,3 @@ export const useShogun = () => {
     isLoggedIn: !!currentUser,
   };
 };
-
