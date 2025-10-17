@@ -52,7 +52,8 @@
       "prev": "Prev",
       "next": "Next",
       "random": "Random",
-      "ofPages": "{{current}} di {{total}}"
+      "ofPages": "{{current}} di {{total}}",
+      "explorePages": "Esplora Pagine"
     },
     "notFound": {
       "title": "Pagina Non Trovata",

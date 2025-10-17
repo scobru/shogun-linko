@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { ShogunCoreInstance, UserInfo, ComponentData, ComponentType } from '../types';
 import type { Theme } from '../hooks/useTheme';
@@ -32,6 +32,7 @@ export default function EditorPage({
   toggleTheme,
 }: EditorPageProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pageTitle, setPageTitle] = useState('');
   const [pageSlug, setPageSlug] = useState('');
@@ -44,6 +45,8 @@ export default function EditorPage({
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLink, setShareLink] = useState('');
   const [searchParams] = useSearchParams();
+  const [allPages, setAllPages] = useState<any[]>([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(-1);
   const { avatarUrl, uploadAvatar } = useUserAvatar(shogun, currentUser);
 
   // Load page from URL if editing, or add sample components
@@ -55,6 +58,13 @@ export default function EditorPage({
     // Don't add sample components here to avoid duplicate key warnings
     // They will be added on first render below
   }, [searchParams, shogun]);
+
+  // Load all pages for navigation
+  useEffect(() => {
+    if (shogun) {
+      loadAllPages();
+    }
+  }, [shogun]);
 
   // Initialize with sample components only once on mount (not when editing)
   useEffect(() => {
@@ -247,6 +257,62 @@ export default function EditorPage({
     }
   };
 
+  const loadAllPages = () => {
+    if (!shogun) return;
+
+    const pages: any[] = [];
+    shogun.db.get('pages').map().once((pageData: any, pageId: string) => {
+      if (pageData && !pageData.deleted) {
+        pages.push({
+          id: pageId,
+          title: pageData.title || 'Untitled',
+          slug: pageData.slug,
+          author: pageData.author,
+          createdAt: pageData.createdAt || Date.now(),
+          updatedAt: pageData.updatedAt || Date.now(),
+        });
+      }
+    });
+
+    setTimeout(() => {
+      // Sort by most recent first
+      pages.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      setAllPages(pages);
+      
+      // Find current page index if editing
+      const pageParam = searchParams.get('edit');
+      if (pageParam) {
+        const index = pages.findIndex(page => page.id === pageParam);
+        setCurrentPageIndex(index);
+      }
+    }, 1000);
+  };
+
+  const getPageUrl = (page: any) => {
+    return page.slug ? `/${page.slug}` : `/view/${page.id}`;
+  };
+
+  const navigateToPrevious = () => {
+    if (currentPageIndex > 0) {
+      navigate(getPageUrl(allPages[currentPageIndex - 1]));
+    }
+  };
+
+  const navigateToNext = () => {
+    if (currentPageIndex < allPages.length - 1) {
+      navigate(getPageUrl(allPages[currentPageIndex + 1]));
+    }
+  };
+
+  const navigateToRandom = () => {
+    if (allPages.length === 0) return;
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * allPages.length);
+    } while (randomIndex === currentPageIndex && allPages.length > 1);
+    navigate(getPageUrl(allPages[randomIndex]));
+  };
+
   const savePage = async () => {
     if (!isLoggedIn) {
       setShowAuthModal(true);
@@ -359,7 +425,7 @@ export default function EditorPage({
   };
 
   return (
-    <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl">
+    <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl ${allPages.length > 1 ? 'pb-20' : ''}`}>
       <Header
         currentUser={currentUser}
         isLoggedIn={isLoggedIn}
@@ -653,6 +719,68 @@ export default function EditorPage({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Navigation Footer */}
+      {allPages.length > 1 && (
+        <footer
+          className="fixed bottom-0 left-0 right-0 py-2 sm:py-3 px-2 sm:px-4 border-t z-40"
+          style={{
+            backgroundColor: 'var(--linktree-surface)',
+            borderColor: 'var(--linktree-outline)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          <div className="container mx-auto max-w-4xl">
+            <div className="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
+              <button
+                onClick={navigateToPrevious}
+                disabled={currentPageIndex <= 0}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
+                style={{
+                  backgroundColor: 'var(--linktree-surface-variant)',
+                  color: 'var(--linktree-text-primary)',
+                  borderColor: 'var(--linktree-outline)',
+                }}
+              >
+                <i className="fas fa-arrow-left mr-1 sm:mr-2"></i>
+                <span className="hidden sm:inline">{t('viewer.navigation.previous')}</span>
+                <span className="sm:hidden">{t('viewer.navigation.prev')}</span>
+              </button>
+              <button
+                onClick={navigateToRandom}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm"
+                style={{
+                  backgroundColor: 'var(--linktree-warning)',
+                  color: 'var(--linktree-text-primary)',
+                }}
+              >
+                <i className="fas fa-random mr-1 sm:mr-2"></i>
+                <span className="hidden sm:inline">{t('viewer.navigation.random')}</span>
+                <span className="sm:hidden">🎲</span>
+              </button>
+              <button
+                onClick={navigateToNext}
+                disabled={currentPageIndex >= allPages.length - 1}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
+                style={{
+                  backgroundColor: 'var(--linktree-surface-variant)',
+                  color: 'var(--linktree-text-primary)',
+                  borderColor: 'var(--linktree-outline)',
+                }}
+              >
+                <span className="hidden sm:inline">{t('viewer.navigation.next')}</span>
+                <span className="sm:hidden">{t('viewer.navigation.next')}</span>
+                <i className="fas fa-arrow-right ml-1 sm:ml-2"></i>
+              </button>
+              {currentPageIndex >= 0 && (
+                <span className="text-xs sm:text-sm ml-2 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
+                  {t('viewer.navigation.ofPages', { current: currentPageIndex + 1, total: allPages.length })}
+                </span>
+              )}
+            </div>
+          </div>
+        </footer>
       )}
 
       <Footer />
