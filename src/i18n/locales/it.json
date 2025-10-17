@@ -1,0 +1,216 @@
+{
+  "header": {
+    "title": "linko",
+    "login": "Accedi",
+    "logout": "Logout",
+    "hello": "Ciao, {{name}}!",
+    "myPages": "Le Mie Pagine",
+    "newPage": "Nuova Pagina",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "editor": {
+    "pageNameLabel": "Nome della Pagina",
+    "pageNamePlaceholder": "Il mio profilo",
+    "customLinkLabel": "Link Personalizzato (opzionale)",
+    "customLinkPlaceholder": "miapagina",
+    "customLinkExample": "Es: \"miapagina\" diventa /{{slug}}",
+    "customLinkAvailable": "Disponibile: {{url}}",
+    "addComponents": "Aggiungi componenti alla tua pagina usando i pulsanti qui sotto",
+    "components": {
+      "title": "Titolo",
+      "text": "Testo",
+      "image": "Immagine",
+      "profile": "Profilo",
+      "link": "Link",
+      "space": "Spazio",
+      "code": "Codice"
+    },
+    "savePage": "Salva Pagina",
+    "saving": "Salvataggio...",
+    "errors": {
+      "onlyLowercase": "Solo lettere minuscole, numeri e trattini",
+      "reserved": "Questo slug è riservato",
+      "alreadyUsed": "Questo slug è già in uso",
+      "enterTitle": "Per favore, inserisci un titolo per la pagina",
+      "slugError": "Errore nello slug: {{error}}",
+      "invalidCharacters": "Lo slug contiene caratteri non validi",
+      "systemReserved": "Questo slug è riservato dal sistema",
+      "alreadyInUse": "Questo slug è già utilizzato da un'altra pagina",
+      "notAuthenticated": "Errore: utente non autenticato"
+    }
+  },
+  "viewer": {
+    "loading": "Caricamento...",
+    "noContent": "Questa pagina non ha ancora nessun contenuto.",
+    "navigation": {
+      "previous": "Previous",
+      "prev": "Prev",
+      "next": "Next",
+      "random": "Random",
+      "ofPages": "{{current}} di {{total}}"
+    },
+    "notFound": {
+      "title": "Pagina Non Trovata",
+      "message": "Lo slug \"{{slug}}\" non corrisponde a nessuna pagina esistente.",
+      "backHome": "Torna alla Home"
+    }
+  },
+  "auth": {
+    "title": "Autenticazione Richiesta",
+    "registerTitle": "Registrazione",
+    "description": "Per creare e modificare pagine devi prima autenticarti.",
+    "registerDescription": "Crea un nuovo account per iniziare.",
+    "username": "Username",
+    "password": "Password",
+    "login": "Accedi",
+    "register": "Registrati",
+    "noAccount": "Non hai un account? Registrati",
+    "hasAccount": "Hai già un account? Accedi",
+    "cancel": "Annulla",
+    "loading": "Caricamento...",
+    "enterCredentials": "Inserisci username e password",
+    "invalidCredentials": "Credenziali non valide",
+    "registrationError": "Errore durante la registrazione"
+  },
+  "shareModal": {
+    "title": "Pagina Salvata con Successo!",
+    "descriptionCustom": "La tua pagina è accessibile tramite il link personalizzato:",
+    "descriptionDefault": "Condividi questo link per far vedere la tua pagina a chiunque.",
+    "customLink": "Link Personalizzato",
+    "alternativeLink": "Link alternativo (ID-based):",
+    "linkCopied": "Link copiato!",
+    "altLinkCopied": "Link alternativo copiato!",
+    "close": "Chiudi"
+  },
+  "deleteModal": {
+    "title": "Conferma Eliminazione",
+    "message": "Sei sicuro di voler eliminare questa pagina?",
+    "warning": "Questa azione non può essere annullata e tutti i dati verranno rimossi definitivamente.",
+    "cancel": "Annulla",
+    "confirm": "Elimina Pagina",
+    "deleting": "Eliminazione...",
+    "success": "Pagina eliminata con successo!"
+  },
+  "myPages": {
+    "title": "Le Mie Pagine",
+    "description": "Gestisci tutte le pagine che hai creato",
+    "createNew": "Crea Nuova Pagina",
+    "loading": "Caricamento pagine...",
+    "empty": {
+      "title": "Nessuna Pagina Ancora",
+      "description": "Inizia creando la tua prima pagina!",
+      "createFirst": "Crea Prima Pagina"
+    },
+    "created": "Creata: {{date}}",
+    "modified": "Modificata: {{date}}",
+    "view": "Visualizza",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "totalPages": "Totale Pagine Create: {{count}}"
+  },
+  "components": {
+    "alignment": "Allineamento",
+    "alignments": {
+      "left": "Sinistra",
+      "center": "Centro",
+      "right": "Destra",
+      "justify": "Giustificato"
+    },
+    "h1": {
+      "placeholder": "Scrivi il tuo titolo qui..."
+    },
+    "paragraph": {
+      "placeholder": "Scrivi il tuo testo qui..."
+    },
+    "image": {
+      "placeholder": "Incolla l'URL dell'immagine..."
+    },
+    "avatar": {
+      "namePlaceholder": "Il tuo nome",
+      "descriptionPlaceholder": "Breve descrizione"
+    },
+    "link": {
+      "titlePlaceholder": "Titolo del link",
+      "urlPlaceholder": "https://esempio.com",
+      "icon": "Icona:",
+      "icons": {
+        "none": "Nessuna",
+        "globe": "Globo",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn",
+        "youtube": "YouTube",
+        "twitter": "Twitter",
+        "github": "GitHub",
+        "music": "Musica",
+        "email": "Email"
+      }
+    },
+    "code": {
+      "title": "Componente Codice",
+      "template": "Template",
+      "chooseTemplate": "Scegli un template...",
+      "templates": {
+        "myspace": "MySpace Style Profile",
+        "geocities": "GeoCities Blink Tag",
+        "marquee": "Marquee Scrolling Text",
+        "guestbook": "Guestbook Anni '90",
+        "hitcounter": "Hit Counter",
+        "underconstruction": "Under Construction",
+        "rainbow": "Rainbow Text",
+        "matrix": "Matrix Rain",
+        "custom": "Codice Personalizzato"
+      },
+      "html": "HTML",
+      "css": "CSS",
+      "js": "JavaScript",
+      "htmlPlaceholder": "Inserisci il tuo HTML qui...",
+      "cssPlaceholder": "Inserisci il tuo CSS qui...",
+      "jsPlaceholder": "Inserisci il tuo JavaScript qui...",
+      "preview": "Anteprima:",
+      "previewPlaceholder": "L'anteprima apparirà qui..."
+    },
+    "controls": {
+      "moveUp": "Sposta su",
+      "moveDown": "Sposta giù",
+      "remove": "Rimuovi",
+      "removeSpace": "Rimuovi spazio"
+    }
+  },
+  "disclaimer": {
+    "title": "LINKO: Demo App",
+    "subtitle": "⚠️ Playground di Tecnologia Sperimentale",
+    "content1": "LINKO è una piattaforma dimostrativa sperimentale in sviluppo attivo. Tutte le funzionalità sono fornite \"così come sono\" senza alcuna garanzia. La piattaforma potrebbe riscontrare problemi tecnici, modifiche funzionali o perdita di dati in qualsiasi momento. Questa demo è destinata esclusivamente a testare la connettività peer-to-peer e i concetti di condivisione dati decentralizzati.",
+    "content2": "La sicurezza del tuo account dipende interamente dalle coppie di chiavi crittografiche generate e memorizzate sul tuo dispositivo. Gli sviluppatori di LINKO non hanno accesso, controllo o capacità di recuperare alcuna coppia di chiavi, dati crittografati o contenuti utente. Utilizzando questa demo, riconosci e accetti la piena responsabilità per la gestione delle tue coppie di chiavi e i rischi associati.",
+    "content3": "Tutti i contenuti condivisi attraverso questa demo sono pubblici, non moderati e trasmessi direttamente tra peer connessi. Gli sviluppatori di LINKO non sono responsabili e non hanno controllo sui contenuti generati dagli utenti, sulle operazioni del server relay o sulle interazioni peer. Questo software è fornito sotto licenza MIT e i suoi sviluppatori si dissociano esplicitamente da qualsiasi responsabilità per come altri possano utilizzare o abusare di questa tecnologia.",
+    "agreeButton": "Accetto e procedi"
+  },
+  "footer": {
+    "builtWith": "build with ❤️ by",
+    "repo": "repo",
+    "partOf": "part of",
+    "shogunProject": "shogun project"
+  },
+  "common": {
+    "or": "o",
+    "and": "e",
+    "yes": "Sì",
+    "no": "No",
+    "ok": "OK",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "view": "Visualizza",
+    "close": "Chiudi",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "warning": "Attenzione"
+  }
+}
+

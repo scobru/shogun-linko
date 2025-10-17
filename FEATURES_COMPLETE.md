@@ -248,34 +248,41 @@ Rispetto alla versione JavaScript originale:
    - Validazione real-time
    - SEO-friendly
 
-2. **✨ Duplicate Prevention**
+2. **✨ Multilingual Support (NUOVO!)** 🌍
+   - Supporto Italiano 🇮🇹 e Inglese 🇬🇧
+   - Cambio istantaneo con un click
+   - Persistenza automatica
+   - 100+ chiavi tradotte
+   - Language selector nell'header
+
+3. **✨ Duplicate Prevention**
    - Map per evitare duplicati
    - Set tracking componenti eliminati
    - Validazione rigorosa
 
-3. **✨ User Avatar Upload**
+4. **✨ User Avatar Upload**
    - Upload nella header
    - Salvataggio su GunDB
    - Avatar default con iniziali
    - Supporto sia in Editor che Viewer
 
-4. **✨ Auto-Clickable URLs**
+5. **✨ Auto-Clickable URLs**
    - URL nei testi diventano automaticamente link
    - Applicato a H1, P, Avatar name/description
    - Sicuro con rel="noopener noreferrer"
 
-5. **✨ Better Error Handling**
+6. **✨ Better Error Handling**
    - 404 page per slug inesistenti
    - Feedback errori dettagliato
    - Loading states ovunque
    - Graceful fallbacks
 
-6. **✨ Legacy URL Support**
+7. **✨ Legacy URL Support**
    - Auto-redirect da `?page=xxx` a `/view/xxx`
    - Compatibilità con link vecchi
    - Nessun link rotto
 
-7. **✨ Cleanup Utility**
+8. **✨ Cleanup Utility**
    - `/clean-db.html` per pulizia database
    - Fix automatico duplicate keys
    - Guided process
@@ -319,6 +326,7 @@ Puoi aggiungerne altri se necessario.
 | Tema Dark/Light | ✅ | ✅ | Same |
 | Navigazione Pages | ✅ | ✅ | Same |
 | **Custom URL Slugs** | ❌ | ✅ 🆕 | **Nuovo!** |
+| **Multilingual (IT/EN)** | ❌ | ✅ 🆕 | **Nuovo!** 🌍 |
 | **User Avatar Upload** | ⚠️ Parziale | ✅ 🆕 | **Migliorato!** |
 | **Auto-Clickable URLs** | ✅ | ✅ | Same |
 | **Duplicate Prevention** | ❌ | ✅ 🆕 | **Nuovo!** |
@@ -334,7 +342,7 @@ Puoi aggiungerne altri se necessario.
 
 ### Bundle Size
 - **Dev**: ~2.5 MB (con source maps)
-- **Prod**: ~150 KB gzipped (con code splitting)
+- **Prod**: ~170 KB gzipped (con code splitting + i18n)
 
 ### Load Time
 - **First Paint**: < 500ms

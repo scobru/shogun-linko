@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 import { codeTemplates } from '../../utils/codeTemplates';
 
@@ -17,6 +18,7 @@ export default function CodeComponent({
   onMoveDown,
   onRemove,
 }: CodeComponentProps) {
+  const { t } = useTranslation();
   const previewRef = useRef<HTMLDivElement>(null);
 
   const updatePreview = () => {
@@ -115,12 +117,12 @@ export default function CodeComponent({
       </div>
 
       <h3 className="text-lg font-semibold mb-3 flex items-center" style={{ color: 'var(--linktree-text-primary)' }}>
-        <i className="fas fa-code mr-2 text-blue-600"></i>Componente Codice
+        <i className="fas fa-code mr-2 text-blue-600"></i>{t('components.code.title')}
       </h3>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-          Template
+          {t('components.code.template')}
         </label>
         <select
           value={data.template || ''}
@@ -132,22 +134,22 @@ export default function CodeComponent({
             borderColor: 'var(--linktree-outline)',
           }}
         >
-          <option value="">Scegli un template...</option>
-          <option value="myspace">MySpace Style Profile</option>
-          <option value="geocities">GeoCities Blink Tag</option>
-          <option value="marquee">Marquee Scrolling Text</option>
-          <option value="guestbook">Guestbook Anni '90</option>
-          <option value="hitcounter">Hit Counter</option>
-          <option value="underconstruction">Under Construction</option>
-          <option value="rainbow">Rainbow Text</option>
-          <option value="matrix">Matrix Rain</option>
-          <option value="custom">Codice Personalizzato</option>
+          <option value="">{t('components.code.chooseTemplate')}</option>
+          <option value="myspace">{t('components.code.templates.myspace')}</option>
+          <option value="geocities">{t('components.code.templates.geocities')}</option>
+          <option value="marquee">{t('components.code.templates.marquee')}</option>
+          <option value="guestbook">{t('components.code.templates.guestbook')}</option>
+          <option value="hitcounter">{t('components.code.templates.hitcounter')}</option>
+          <option value="underconstruction">{t('components.code.templates.underconstruction')}</option>
+          <option value="rainbow">{t('components.code.templates.rainbow')}</option>
+          <option value="matrix">{t('components.code.templates.matrix')}</option>
+          <option value="custom">{t('components.code.templates.custom')}</option>
         </select>
       </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-          HTML
+          {t('components.code.html')}
         </label>
         <textarea
           value={data.html || ''}
@@ -159,13 +161,13 @@ export default function CodeComponent({
             borderColor: 'var(--linktree-outline)',
           }}
           rows={4}
-          placeholder="Inserisci il tuo HTML qui..."
+          placeholder={t('components.code.htmlPlaceholder')}
         />
       </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-          CSS
+          {t('components.code.css')}
         </label>
         <textarea
           value={data.css || ''}
@@ -177,13 +179,13 @@ export default function CodeComponent({
             borderColor: 'var(--linktree-outline)',
           }}
           rows={4}
-          placeholder="Inserisci il tuo CSS qui..."
+          placeholder={t('components.code.cssPlaceholder')}
         />
       </div>
 
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-          JavaScript
+          {t('components.code.js')}
         </label>
         <textarea
           value={data.js || ''}
@@ -195,13 +197,13 @@ export default function CodeComponent({
             borderColor: 'var(--linktree-outline)',
           }}
           rows={4}
-          placeholder="Inserisci il tuo JavaScript qui..."
+          placeholder={t('components.code.jsPlaceholder')}
         />
       </div>
 
       <div className="p-3 rounded-lg" style={{ backgroundColor: 'var(--linktree-surface-variant)' }}>
         <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-          Anteprima:
+          {t('components.code.preview')}
         </h4>
         <div
           ref={previewRef}
@@ -212,7 +214,7 @@ export default function CodeComponent({
           }}
         >
           <p className="text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
-            L'anteprima apparirà qui...
+            {t('components.code.previewPlaceholder')}
           </p>
         </div>
       </div>

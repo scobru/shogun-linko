@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 
 interface ImageComponentProps {
@@ -15,6 +16,8 @@ export default function ImageComponent({
   onMoveDown,
   onRemove,
 }: ImageComponentProps) {
+  const { t } = useTranslation();
+  
   return (
     <div
       className="component-wrapper relative p-4 border rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
@@ -50,7 +53,7 @@ export default function ImageComponent({
 
       <input
         type="text"
-        placeholder="Incolla l'URL dell'immagine..."
+        placeholder={t('components.image.placeholder')}
         value={data.src || ''}
         onChange={(e) => onUpdate({ src: e.target.value })}
         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"

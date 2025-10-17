@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthModalProps) {
+  const { t } = useTranslation();
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +22,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
     e.preventDefault();
     
     if (!username || !password) {
-      setFeedback('Inserisci username e password');
+      setFeedback(t('auth.enterCredentials'));
       return;
     }
 
@@ -38,7 +40,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
       setPassword('');
       setFeedback('');
     } catch (error) {
-      setFeedback(isRegisterMode ? 'Errore durante la registrazione' : 'Credenziali non valide');
+      setFeedback(isRegisterMode ? t('auth.registrationError') : t('auth.invalidCredentials'));
     } finally {
       setIsLoading(false);
     }
@@ -51,19 +53,17 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
         style={{ backgroundColor: 'var(--linktree-surface)', borderColor: 'var(--linktree-outline)' }}
       >
         <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--linktree-text-primary)' }}>
-          {isRegisterMode ? 'Registrazione' : 'Autenticazione Richiesta'}
+          {isRegisterMode ? t('auth.registerTitle') : t('auth.title')}
         </h2>
         <p className="mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-          {isRegisterMode
-            ? 'Crea un nuovo account per iniziare.'
-            : 'Per creare e modificare pagine devi prima autenticarti.'}
+          {isRegisterMode ? t('auth.registerDescription') : t('auth.description')}
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
               type="text"
-              placeholder="Username"
+              placeholder={t('auth.username')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={isLoading}
@@ -78,7 +78,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
           <div className="mb-6">
             <input
               type="password"
-              placeholder="Password"
+              placeholder={t('auth.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
@@ -102,7 +102,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
             ) : (
               <i className={`fas fa-${isRegisterMode ? 'user-plus' : 'sign-in-alt'} mr-2`}></i>
             )}
-            {isLoading ? 'Caricamento...' : isRegisterMode ? 'Registrati' : 'Accedi'}
+            {isLoading ? t('auth.loading') : isRegisterMode ? t('auth.register') : t('auth.login')}
           </button>
           <button
             type="button"
@@ -112,7 +112,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
             }}
             className="text-indigo-600 hover:text-indigo-800 transition"
           >
-            {isRegisterMode ? 'Hai già un account? Accedi' : 'Non hai un account? Registrati'}
+            {isRegisterMode ? t('auth.hasAccount') : t('auth.noAccount')}
           </button>
         </form>
 
@@ -133,7 +133,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onSignUp }: AuthMo
             color: 'var(--linktree-text-primary)',
           }}
         >
-          Annulla
+          {t('auth.cancel')}
         </button>
       </div>
     </div>

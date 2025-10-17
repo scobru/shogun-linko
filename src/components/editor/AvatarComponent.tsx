@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 
 interface AvatarComponentProps {
@@ -16,6 +17,7 @@ export default function AvatarComponent({
   onMoveDown,
   onRemove,
 }: AvatarComponentProps) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +96,7 @@ export default function AvatarComponent({
             className="text-xl font-semibold focus:outline-none w-full mb-1 text-center"
             style={{ color: 'var(--linktree-text-primary)' }}
             dangerouslySetInnerHTML={{ __html: data.name || '' }}
-            placeholder="Il tuo nome"
+            placeholder={t('components.avatar.namePlaceholder')}
           />
           <div
             contentEditable
@@ -103,7 +105,7 @@ export default function AvatarComponent({
             className="text-sm focus:outline-none w-full text-center"
             style={{ color: 'var(--linktree-text-secondary)' }}
             dangerouslySetInnerHTML={{ __html: data.description || '' }}
-            placeholder="Breve descrizione"
+            placeholder={t('components.avatar.descriptionPlaceholder')}
           />
         </div>
       </div>

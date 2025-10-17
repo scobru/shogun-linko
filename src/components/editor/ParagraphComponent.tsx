@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 
 interface ParagraphComponentProps {
@@ -15,6 +16,8 @@ export default function ParagraphComponent({
   onMoveDown,
   onRemove,
 }: ParagraphComponentProps) {
+  const { t } = useTranslation();
+  
   return (
     <div
       className="component-wrapper relative p-4 border rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
@@ -51,7 +54,7 @@ export default function ParagraphComponent({
 
       <div className="flex items-center gap-2 mb-2">
         <label className="text-xs" style={{ color: 'var(--linktree-text-secondary)' }}>
-          Allineamento:
+          {t('components.alignment')}:
         </label>
         <select
           value={data.alignment || 'justify'}
@@ -63,10 +66,10 @@ export default function ParagraphComponent({
             borderColor: 'var(--linktree-outline)',
           }}
         >
-          <option value="left">Sinistra</option>
-          <option value="center">Centro</option>
-          <option value="right">Destra</option>
-          <option value="justify">Giustificato</option>
+          <option value="left">{t('components.alignments.left')}</option>
+          <option value="center">{t('components.alignments.center')}</option>
+          <option value="right">{t('components.alignments.right')}</option>
+          <option value="justify">{t('components.alignments.justify')}</option>
         </select>
       </div>
 
@@ -77,7 +80,7 @@ export default function ParagraphComponent({
         className={`text-base focus:outline-none w-full text-${data.alignment || 'justify'}`}
         style={{ color: 'var(--linktree-text-secondary)' }}
         dangerouslySetInnerHTML={{ __html: data.content || '' }}
-        placeholder="Scrivi il tuo testo qui..."
+        placeholder={t('components.paragraph.placeholder')}
       />
     </div>
   );

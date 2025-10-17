@@ -1,0 +1,216 @@
+{
+  "header": {
+    "title": "linko",
+    "login": "Login",
+    "logout": "Logout",
+    "hello": "Hi, {{name}}!",
+    "myPages": "My Pages",
+    "newPage": "New Page",
+    "edit": "Edit",
+    "delete": "Delete",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark"
+    }
+  },
+  "editor": {
+    "pageNameLabel": "Page Name",
+    "pageNamePlaceholder": "My profile",
+    "customLinkLabel": "Custom Link (optional)",
+    "customLinkPlaceholder": "mypage",
+    "customLinkExample": "e.g. \"mypage\" becomes /{{slug}}",
+    "customLinkAvailable": "Available: {{url}}",
+    "addComponents": "Add components to your page using the buttons below",
+    "components": {
+      "title": "Title",
+      "text": "Text",
+      "image": "Image",
+      "profile": "Profile",
+      "link": "Link",
+      "space": "Space",
+      "code": "Code"
+    },
+    "savePage": "Save Page",
+    "saving": "Saving...",
+    "errors": {
+      "onlyLowercase": "Only lowercase letters, numbers and hyphens",
+      "reserved": "This slug is reserved",
+      "alreadyUsed": "This slug is already in use",
+      "enterTitle": "Please enter a page title",
+      "slugError": "Slug error: {{error}}",
+      "invalidCharacters": "Slug contains invalid characters",
+      "systemReserved": "This slug is reserved by the system",
+      "alreadyInUse": "This slug is already used by another page",
+      "notAuthenticated": "Error: user not authenticated"
+    }
+  },
+  "viewer": {
+    "loading": "Loading...",
+    "noContent": "This page has no content yet.",
+    "navigation": {
+      "previous": "Previous",
+      "prev": "Prev",
+      "next": "Next",
+      "random": "Random",
+      "ofPages": "{{current}} of {{total}}"
+    },
+    "notFound": {
+      "title": "Page Not Found",
+      "message": "The slug \"{{slug}}\" doesn't match any existing page.",
+      "backHome": "Back to Home"
+    }
+  },
+  "auth": {
+    "title": "Authentication Required",
+    "registerTitle": "Registration",
+    "description": "To create and edit pages you must first authenticate.",
+    "registerDescription": "Create a new account to get started.",
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "register": "Register",
+    "noAccount": "Don't have an account? Register",
+    "hasAccount": "Already have an account? Login",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "enterCredentials": "Enter username and password",
+    "invalidCredentials": "Invalid credentials",
+    "registrationError": "Error during registration"
+  },
+  "shareModal": {
+    "title": "Page Saved Successfully!",
+    "descriptionCustom": "Your page is accessible via the custom link:",
+    "descriptionDefault": "Share this link to show your page to anyone.",
+    "customLink": "Custom Link",
+    "alternativeLink": "Alternative link (ID-based):",
+    "linkCopied": "Link copied!",
+    "altLinkCopied": "Alternative link copied!",
+    "close": "Close"
+  },
+  "deleteModal": {
+    "title": "Confirm Deletion",
+    "message": "Are you sure you want to delete this page?",
+    "warning": "This action cannot be undone and all data will be permanently removed.",
+    "cancel": "Cancel",
+    "confirm": "Delete Page",
+    "deleting": "Deleting...",
+    "success": "Page deleted successfully!"
+  },
+  "myPages": {
+    "title": "My Pages",
+    "description": "Manage all the pages you have created",
+    "createNew": "Create New Page",
+    "loading": "Loading pages...",
+    "empty": {
+      "title": "No Pages Yet",
+      "description": "Start by creating your first page!",
+      "createFirst": "Create First Page"
+    },
+    "created": "Created: {{date}}",
+    "modified": "Modified: {{date}}",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "totalPages": "Total Pages Created: {{count}}"
+  },
+  "components": {
+    "alignment": "Alignment",
+    "alignments": {
+      "left": "Left",
+      "center": "Center",
+      "right": "Right",
+      "justify": "Justified"
+    },
+    "h1": {
+      "placeholder": "Write your title here..."
+    },
+    "paragraph": {
+      "placeholder": "Write your text here..."
+    },
+    "image": {
+      "placeholder": "Paste image URL..."
+    },
+    "avatar": {
+      "namePlaceholder": "Your name",
+      "descriptionPlaceholder": "Brief description"
+    },
+    "link": {
+      "titlePlaceholder": "Link title",
+      "urlPlaceholder": "https://example.com",
+      "icon": "Icon:",
+      "icons": {
+        "none": "None",
+        "globe": "Globe",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn",
+        "youtube": "YouTube",
+        "twitter": "Twitter",
+        "github": "GitHub",
+        "music": "Music",
+        "email": "Email"
+      }
+    },
+    "code": {
+      "title": "Code Component",
+      "template": "Template",
+      "chooseTemplate": "Choose a template...",
+      "templates": {
+        "myspace": "MySpace Style Profile",
+        "geocities": "GeoCities Blink Tag",
+        "marquee": "Marquee Scrolling Text",
+        "guestbook": "90s Guestbook",
+        "hitcounter": "Hit Counter",
+        "underconstruction": "Under Construction",
+        "rainbow": "Rainbow Text",
+        "matrix": "Matrix Rain",
+        "custom": "Custom Code"
+      },
+      "html": "HTML",
+      "css": "CSS",
+      "js": "JavaScript",
+      "htmlPlaceholder": "Insert your HTML here...",
+      "cssPlaceholder": "Insert your CSS here...",
+      "jsPlaceholder": "Insert your JavaScript here...",
+      "preview": "Preview:",
+      "previewPlaceholder": "The preview will appear here..."
+    },
+    "controls": {
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "removeSpace": "Remove space"
+    }
+  },
+  "disclaimer": {
+    "title": "LINKO: Demo App",
+    "subtitle": "⚠️ Experimental Technology Playground",
+    "content1": "LINKO is an experimental demonstration platform under active development. All features are provided \"as is\" without any warranties. The platform may experience technical issues, functionality changes, or data loss at any time. This demo is intended solely for testing peer-to-peer connectivity and decentralized data sharing concepts.",
+    "content2": "Your account security relies entirely on cryptographic keypairs generated and stored on your device. LINKO developers do not have access to, control over, or ability to recover any keypairs, encrypted data, or user content. By using this demo, you acknowledge and accept full responsibility for managing your keypairs and any associated risks.",
+    "content3": "All content shared through this demo is public, unmoderated, and transmitted directly between connected peers. LINKO developers are not responsible for and have no control over user-generated content, relay server operations, or peer interactions. This software is provided under the MIT license, and its developers explicitly disclaim any liability for how others may use or misuse this technology.",
+    "agreeButton": "Agree and proceed"
+  },
+  "footer": {
+    "builtWith": "built with ❤️ by",
+    "repo": "repo",
+    "partOf": "part of",
+    "shogunProject": "shogun project"
+  },
+  "common": {
+    "or": "or",
+    "and": "and",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning"
+  }
+}
+

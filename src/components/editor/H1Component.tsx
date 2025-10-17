@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 
 interface H1ComponentProps {
@@ -15,6 +16,8 @@ export default function H1Component({
   onMoveDown,
   onRemove,
 }: H1ComponentProps) {
+  const { t } = useTranslation();
+  
   return (
     <div
       className="component-wrapper relative p-4 border rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
@@ -55,7 +58,7 @@ export default function H1Component({
       {/* Alignment selector */}
       <div className="flex items-center gap-2 mb-2">
         <label className="text-xs" style={{ color: 'var(--linktree-text-secondary)' }}>
-          Allineamento:
+          {t('components.alignment')}:
         </label>
         <select
           value={data.alignment || 'center'}
@@ -67,10 +70,10 @@ export default function H1Component({
             borderColor: 'var(--linktree-outline)',
           }}
         >
-          <option value="left">Sinistra</option>
-          <option value="center">Centro</option>
-          <option value="right">Destra</option>
-          <option value="justify">Giustificato</option>
+          <option value="left">{t('components.alignments.left')}</option>
+          <option value="center">{t('components.alignments.center')}</option>
+          <option value="right">{t('components.alignments.right')}</option>
+          <option value="justify">{t('components.alignments.justify')}</option>
         </select>
       </div>
 
@@ -82,7 +85,7 @@ export default function H1Component({
         className={`text-2xl font-semibold focus:outline-none w-full text-${data.alignment || 'center'}`}
         style={{ color: 'var(--linktree-text-primary)' }}
         dangerouslySetInnerHTML={{ __html: data.content || '' }}
-        placeholder="Scrivi il tuo titolo qui..."
+        placeholder={t('components.h1.placeholder')}
       />
     </div>
   );

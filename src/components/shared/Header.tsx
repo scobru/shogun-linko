@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../hooks/useLanguage';
 import type { UserInfo } from '../../types';
 import type { Theme } from '../../hooks/useTheme';
 
@@ -36,6 +38,8 @@ export default function Header({
   avatarUrl,
   onAvatarUpload,
 }: HeaderProps) {
+  const { t } = useTranslation();
+  const { language, toggleLanguage } = useLanguage();
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +71,7 @@ export default function Header({
                 borderColor: 'var(--linktree-outline)',
               }}
             >
-              <i className="fas fa-sign-in-alt mr-2"></i>Accedi
+              <i className="fas fa-sign-in-alt mr-2"></i>{t('header.login')}
             </button>
           ) : isLoggedIn && currentUser ? (
             <>
@@ -92,7 +96,7 @@ export default function Header({
                 </div>
               )}
               <span className="text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
-                Ciao, {currentUser.alias}!
+                {t('header.hello', { name: currentUser.alias })}
               </span>
               {showMyPagesButton && (
                 <Link
@@ -105,8 +109,8 @@ export default function Header({
                   }}
                 >
                   <i className="fas fa-folder-open mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">Le Mie Pagine</span>
-                  <span className="sm:hidden">Pagine</span>
+                  <span className="hidden sm:inline">{t('header.myPages')}</span>
+                  <span className="sm:hidden">{language === 'en' ? 'Pages' : 'Pagine'}</span>
                 </Link>
               )}
               {showEditButton && onEditClick && (
@@ -120,7 +124,7 @@ export default function Header({
                   }}
                 >
                   <i className="fas fa-edit mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">Modifica</span>
+                  <span className="hidden sm:inline">{t('header.edit')}</span>
                   <span className="sm:hidden">Edit</span>
                 </button>
               )}
@@ -130,7 +134,7 @@ export default function Header({
                   className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition text-xs sm:text-sm font-medium"
                 >
                   <i className="fas fa-trash mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">Elimina</span>
+                  <span className="hidden sm:inline">{t('header.delete')}</span>
                   <span className="sm:hidden">Del</span>
                 </button>
               )}
@@ -140,7 +144,7 @@ export default function Header({
                   className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition text-xs sm:text-sm font-medium"
                 >
                   <i className="fas fa-sign-out-alt mr-1"></i>
-                  <span className="hidden sm:inline">Logout</span>
+                  <span className="hidden sm:inline">{t('header.logout')}</span>
                   <span className="sm:hidden">Exit</span>
                 </button>
               )}
@@ -158,8 +162,8 @@ export default function Header({
               }}
             >
               <i className="fas fa-plus mr-1 sm:mr-2"></i>
-              <span className="hidden sm:inline">Nuova Pagina</span>
-              <span className="sm:hidden">Nuova</span>
+              <span className="hidden sm:inline">{t('header.newPage')}</span>
+              <span className="sm:hidden">{language === 'en' ? 'New' : 'Nuova'}</span>
             </Link>
           )}
           
@@ -173,8 +177,23 @@ export default function Header({
             }}
           >
             <i className={`fas fa-${theme === 'dark' ? 'sun' : 'moon'} mr-1 sm:mr-2`}></i>
-            <span className="hidden sm:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+            <span className="hidden sm:inline">{theme === 'dark' ? t('header.theme.light') : t('header.theme.dark')}</span>
             <span className="sm:hidden">{theme === 'dark' ? '☀️' : '🌙'}</span>
+          </button>
+
+          {/* Language Selector */}
+          <button
+            onClick={toggleLanguage}
+            className="px-3 py-2 border rounded-full hover:bg-gray-50 transition font-medium text-xs sm:text-sm"
+            style={{
+              backgroundColor: 'var(--linktree-surface)',
+              color: 'var(--linktree-text-primary)',
+              borderColor: 'var(--linktree-outline)',
+            }}
+            title={language === 'en' ? 'Switch to Italian' : 'Passa all\'inglese'}
+          >
+            <i className="fas fa-language mr-1 sm:mr-2"></i>
+            <span className="font-bold">{language.toUpperCase()}</span>
           </button>
         </div>
       </div>

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { ShogunCoreInstance, UserInfo, ComponentData, ComponentType } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
 import { slugify, isValidSlug, isSlugAvailable } from '../utils/slugify';
 import Header from '../components/shared/Header';
 import AuthModal from '../components/shared/AuthModal';
+import Footer from '../components/shared/Footer';
 import ComponentWrapper from '../components/editor/ComponentWrapper';
 
 interface EditorPageProps {
@@ -29,6 +31,7 @@ export default function EditorPage({
   theme,
   toggleTheme,
 }: EditorPageProps) {
+  const { t } = useTranslation();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pageTitle, setPageTitle] = useState('');
   const [pageSlug, setPageSlug] = useState('');
@@ -175,20 +178,20 @@ export default function EditorPage({
 
     // Validate format
     if (!isValidSlug(sanitized)) {
-      setSlugError('Solo lettere minuscole, numeri e trattini');
+      setSlugError(t('editor.errors.onlyLowercase'));
       return;
     }
 
     // Check if reserved
     if (!isSlugAvailable(sanitized)) {
-      setSlugError('Questo slug è riservato');
+      setSlugError(t('editor.errors.reserved'));
       return;
     }
 
     // Check database availability
     const available = await checkSlugAvailability(sanitized);
     if (!available) {
-      setSlugError('Questo slug è già in uso');
+      setSlugError(t('editor.errors.alreadyUsed'));
     }
   };
 
@@ -251,36 +254,36 @@ export default function EditorPage({
     }
 
     if (!pageTitle.trim()) {
-      alert('Per favore, inserisci un titolo per la pagina.');
+      alert(t('editor.errors.enterTitle'));
       return;
     }
 
     // Validate slug if provided
     if (pageSlug) {
       if (slugError) {
-        alert(`Errore nello slug: ${slugError}`);
+        alert(t('editor.errors.slugError', { error: slugError }));
         return;
       }
 
       if (!isValidSlug(pageSlug)) {
-        alert('Lo slug contiene caratteri non validi.');
+        alert(t('editor.errors.invalidCharacters'));
         return;
       }
 
       if (!isSlugAvailable(pageSlug)) {
-        alert('Questo slug è riservato dal sistema.');
+        alert(t('editor.errors.systemReserved'));
         return;
       }
 
       const available = await checkSlugAvailability(pageSlug);
       if (!available) {
-        alert('Questo slug è già utilizzato da un\'altra pagina.');
+        alert(t('editor.errors.alreadyInUse'));
         return;
       }
     }
 
     if (!shogun || !currentUser) {
-      alert('Errore: utente non autenticato.');
+      alert(t('editor.errors.notAuthenticated'));
       return;
     }
 
@@ -383,12 +386,12 @@ export default function EditorPage({
               className="block text-sm font-medium mb-2 text-center"
               style={{ color: 'var(--linktree-text-secondary)' }}
             >
-              Nome della Pagina
+              {t('editor.pageNameLabel')}
             </label>
             <input
               type="text"
               id="page-title"
-              placeholder="Il mio profilo"
+              placeholder={t('editor.pageNamePlaceholder')}
               value={pageTitle}
               onChange={(e) => setPageTitle(e.target.value)}
               className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center font-medium text-sm sm:text-base"
@@ -406,7 +409,7 @@ export default function EditorPage({
               className="block text-sm font-medium mb-2 text-center"
               style={{ color: 'var(--linktree-text-secondary)' }}
             >
-              Link Personalizzato (opzionale)
+              {t('editor.customLinkLabel')}
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -415,7 +418,7 @@ export default function EditorPage({
                 <input
                   type="text"
                   id="page-slug"
-                  placeholder="miapagina"
+                  placeholder={t('editor.customLinkPlaceholder')}
                   value={pageSlug}
                   onChange={(e) => handleSlugChange(e.target.value)}
                   className={`w-full px-3 sm:px-4 py-2 sm:py-3 pl-6 sm:pl-7 border rounded-xl focus:ring-2 transition text-center font-medium text-sm sm:text-base ${
@@ -442,11 +445,11 @@ export default function EditorPage({
             {pageSlug && !slugError && !isCheckingSlug && (
               <p className="text-xs mt-1 text-center" style={{ color: 'var(--linktree-success)' }}>
                 <i className="fas fa-check-circle mr-1"></i>
-                Disponibile: {window.location.origin}/{pageSlug}
+                {t('editor.customLinkAvailable', { url: `${window.location.origin}/${pageSlug}` })}
               </p>
             )}
             <p className="text-xs mt-1 text-center" style={{ color: 'var(--linktree-text-disabled)' }}>
-              Es: "miapagina" diventa /{pageSlug || 'miapagina'}
+              {t('editor.customLinkExample', { slug: pageSlug || 'miapagina' })}
             </p>
           </div>
 
@@ -463,7 +466,7 @@ export default function EditorPage({
             ))}
             {components.length === 0 && (
               <p className="text-center text-sm py-8" style={{ color: 'var(--linktree-text-secondary)' }}>
-                Aggiungi componenti alla tua pagina usando i pulsanti qui sotto
+                {t('editor.addComponents')}
               </p>
             )}
           </div>
@@ -479,7 +482,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-heading mr-2"></i>Titolo
+                <i className="fas fa-heading mr-2"></i>{t('editor.components.title')}
               </button>
               <button
                 onClick={() => addComponent('p')}
@@ -490,7 +493,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-paragraph mr-2"></i>Testo
+                <i className="fas fa-paragraph mr-2"></i>{t('editor.components.text')}
               </button>
               <button
                 onClick={() => addComponent('img')}
@@ -501,7 +504,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-image mr-2"></i>Immagine
+                <i className="fas fa-image mr-2"></i>{t('editor.components.image')}
               </button>
               <button
                 onClick={() => addComponent('avatar')}
@@ -512,7 +515,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-user-circle mr-2"></i>Profilo
+                <i className="fas fa-user-circle mr-2"></i>{t('editor.components.profile')}
               </button>
               <button
                 onClick={() => addComponent('link')}
@@ -523,7 +526,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-link mr-2"></i>Link
+                <i className="fas fa-link mr-2"></i>{t('editor.components.link')}
               </button>
               <button
                 onClick={() => addComponent('spacer')}
@@ -534,7 +537,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-arrows-alt-v mr-2"></i>Spazio
+                <i className="fas fa-arrows-alt-v mr-2"></i>{t('editor.components.space')}
               </button>
               <button
                 onClick={() => addComponent('code')}
@@ -545,7 +548,7 @@ export default function EditorPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                <i className="fas fa-code mr-2"></i>Codice
+                <i className="fas fa-code mr-2"></i>{t('editor.components.code')}
               </button>
             </div>
 
@@ -555,9 +558,9 @@ export default function EditorPage({
               className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition shadow-sm disabled:opacity-50 text-sm sm:text-base"
             >
               {isSaving ? (
-                <><i className="fas fa-spinner fa-spin mr-2"></i>Salvataggio...</>
+                <><i className="fas fa-spinner fa-spin mr-2"></i>{t('editor.saving')}</>
               ) : (
-                <><i className="fas fa-save mr-2"></i>Salva Pagina</>
+                <><i className="fas fa-save mr-2"></i>{t('editor.savePage')}</>
               )}
             </button>
           </div>
@@ -579,12 +582,10 @@ export default function EditorPage({
             style={{ backgroundColor: 'var(--linktree-surface)' }}
           >
             <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--linktree-text-primary)' }}>
-              Pagina Salvata con Successo!
+              {t('shareModal.title')}
             </h2>
             <p className="mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-              {pageSlug
-                ? 'La tua pagina è accessibile tramite il link personalizzato:'
-                : 'Condividi questo link per far vedere la tua pagina a chiunque.'}
+              {pageSlug ? t('shareModal.descriptionCustom') : t('shareModal.descriptionDefault')}
             </p>
 
             {/* Primary Link (Custom slug or ID-based) */}
@@ -592,7 +593,7 @@ export default function EditorPage({
               {pageSlug && (
                 <p className="text-xs mb-1 font-semibold" style={{ color: 'var(--linktree-success)' }}>
                   <i className="fas fa-star mr-1"></i>
-                  Link Personalizzato
+                  {t('shareModal.customLink')}
                 </p>
               )}
               <div className="relative p-3 rounded-lg border" style={{ backgroundColor: 'var(--linktree-surface-variant)', borderColor: 'var(--linktree-outline)' }}>
@@ -606,7 +607,7 @@ export default function EditorPage({
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(shareLink);
-                    alert('Link copiato!');
+                    alert(t('shareModal.linkCopied'));
                   }}
                   className="absolute top-1/2 right-2 transform -translate-y-1/2 hover:text-indigo-600"
                   style={{ color: 'var(--linktree-text-secondary)' }}
@@ -620,7 +621,7 @@ export default function EditorPage({
             {pageSlug && currentPageId && (
               <div className="mb-4">
                 <p className="text-xs mb-1" style={{ color: 'var(--linktree-text-secondary)' }}>
-                  Link alternativo (ID-based):
+                  {t('shareModal.alternativeLink')}
                 </p>
                 <div className="relative p-2 rounded-lg border" style={{ backgroundColor: 'var(--linktree-surface)', borderColor: 'var(--linktree-outline)' }}>
                   <input
@@ -633,7 +634,7 @@ export default function EditorPage({
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(`${window.location.origin}/view/${currentPageId}`);
-                      alert('Link alternativo copiato!');
+                      alert(t('shareModal.altLinkCopied'));
                     }}
                     className="absolute top-1/2 right-2 transform -translate-y-1/2 hover:text-indigo-600"
                     style={{ color: 'var(--linktree-text-secondary)' }}
@@ -648,11 +649,13 @@ export default function EditorPage({
               onClick={() => setShowShareModal(false)}
               className="mt-6 px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition"
             >
-              Chiudi
+              {t('shareModal.close')}
             </button>
           </div>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 }

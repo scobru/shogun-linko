@@ -5,6 +5,7 @@ A modern, Linktree-style page builder powered by GunDB and Shogun Core, built wi
 ## Features
 
 - 🎨 **Linktree-inspired Design** - Clean, modern UI with dark mode support
+- 🌍 **Multilingual** - Full support for English and Italian with instant switching
 - ⚡ **Real-time Sync** - Powered by GunDB for decentralized data storage
 - 🔐 **Authentication** - Secure user authentication with Shogun Core
 - 📱 **Responsive** - Mobile-first design with TailwindCSS
@@ -16,6 +17,7 @@ A modern, Linktree-style page builder powered by GunDB and Shogun Core, built wi
 - **Frontend**: React 18 + TypeScript
 - **Routing**: React Router v6
 - **Styling**: TailwindCSS + CSS Variables
+- **i18n**: react-i18next (IT/EN)
 - **Database**: GunDB via Shogun Core
 - **Build Tool**: Vite
 - **Icons**: Font Awesome 6
@@ -77,6 +79,19 @@ shogun-linkthree/
 
 - `/` - Editor page (create/edit pages)
 - `/view/:pageId` - View a specific page
+- `/my-pages` - User's pages list
+- `/:slug` - Custom slug pages
+
+## Internationalization
+
+The app supports **Italian** 🇮🇹 and **English** 🇬🇧:
+
+- **Default Language**: Italian
+- **Switch Language**: Click the 🌐 button in the header
+- **Persistence**: Language preference is saved in localStorage
+- **Coverage**: 100% of the UI is translated
+
+See `I18N.md` for full documentation.
 
 ## Development Notes
 

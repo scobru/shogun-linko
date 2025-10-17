@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { ShogunCoreInstance, UserInfo, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
@@ -22,6 +23,7 @@ export default function MyPagesPage({
   theme,
   toggleTheme,
 }: MyPagesPageProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [myPages, setMyPages] = useState<PageData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,24 +80,24 @@ export default function MyPagesPage({
     if (!shogun || !pageToDelete) return;
 
     setIsDeleting(true);
-    try {
-      // Mark page as deleted
-      await shogun.db.get('pages').get(pageToDelete.id).put({ deleted: true, deletedAt: Date.now() });
-      
-      // Delete slug mapping if exists
-      if (pageToDelete.slug) {
-        await shogun.db.get('slugs').get(pageToDelete.slug).put(null);
-      }
-      
-      // Remove from local state
-      setMyPages(myPages.filter(p => p.id !== pageToDelete.id));
-      
-      setShowDeleteModal(false);
-      setPageToDelete(null);
-    } catch (error) {
-      console.error('Error deleting page:', error);
-      alert('Errore durante l\'eliminazione.');
-    } finally {
+      try {
+        // Mark page as deleted
+        await shogun.db.get('pages').get(pageToDelete.id).put({ deleted: true, deletedAt: Date.now() });
+        
+        // Delete slug mapping if exists
+        if (pageToDelete.slug) {
+          await shogun.db.get('slugs').get(pageToDelete.slug).put(null);
+        }
+        
+        // Remove from local state
+        setMyPages(myPages.filter(p => p.id !== pageToDelete.id));
+        
+        setShowDeleteModal(false);
+        setPageToDelete(null);
+      } catch (error) {
+        console.error('Error deleting page:', error);
+        alert(t('common.error'));
+      } finally {
       setIsDeleting(false);
     }
   };
@@ -133,10 +135,10 @@ export default function MyPagesPage({
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--linktree-text-primary)' }}>
             <i className="fas fa-folder-open mr-3"></i>
-            Le Mie Pagine
+            {t('myPages.title')}
           </h1>
           <p className="text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
-            Gestisci tutte le pagine che hai creato
+            {t('myPages.description')}
           </p>
         </div>
 
@@ -147,7 +149,7 @@ export default function MyPagesPage({
             className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition shadow-md text-sm sm:text-base"
           >
             <i className="fas fa-plus mr-2"></i>
-            Crea Nuova Pagina
+            {t('myPages.createNew')}
           </button>
         </div>
 
@@ -155,7 +157,7 @@ export default function MyPagesPage({
         {isLoading && (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p style={{ color: 'var(--linktree-text-secondary)' }}>Caricamento pagine...</p>
+            <p style={{ color: 'var(--linktree-text-secondary)' }}>{t('myPages.loading')}</p>
           </div>
         )}
 
@@ -173,17 +175,17 @@ export default function MyPagesPage({
               style={{ color: 'var(--linktree-text-disabled)' }}
             ></i>
             <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--linktree-text-primary)' }}>
-              Nessuna Pagina Ancora
+              {t('myPages.empty.title')}
             </h2>
             <p className="mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-              Inizia creando la tua prima pagina!
+              {t('myPages.empty.description')}
             </p>
             <button
               onClick={() => navigate('/')}
               className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition"
             >
               <i className="fas fa-plus mr-2"></i>
-              Crea Prima Pagina
+              {t('myPages.empty.createFirst')}
             </button>
           </div>
         )}
@@ -230,11 +232,11 @@ export default function MyPagesPage({
                     <div className="flex flex-wrap gap-4 text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
                       <span>
                         <i className="fas fa-calendar mr-1"></i>
-                        Creata: {formatDate(page.createdAt)}
+                        {t('myPages.created', { date: formatDate(page.createdAt) })}
                       </span>
                       <span>
                         <i className="fas fa-clock mr-1"></i>
-                        Modificata: {formatDate(page.updatedAt)}
+                        {t('myPages.modified', { date: formatDate(page.updatedAt) })}
                       </span>
                     </div>
                   </div>
@@ -251,7 +253,7 @@ export default function MyPagesPage({
                       }}
                     >
                       <i className="fas fa-eye mr-1 sm:mr-2"></i>
-                      <span className="hidden sm:inline">Visualizza</span>
+                      <span className="hidden sm:inline">{t('myPages.view')}</span>
                       <span className="sm:hidden">View</span>
                     </button>
 
@@ -266,7 +268,7 @@ export default function MyPagesPage({
                       }}
                     >
                       <i className="fas fa-edit mr-1 sm:mr-2"></i>
-                      <span className="hidden sm:inline">Modifica</span>
+                      <span className="hidden sm:inline">{t('myPages.edit')}</span>
                       <span className="sm:hidden">Edit</span>
                     </button>
 
@@ -276,7 +278,7 @@ export default function MyPagesPage({
                       className="px-3 sm:px-4 py-1 sm:py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg hover:bg-red-100 transition text-xs sm:text-sm font-medium"
                     >
                       <i className="fas fa-trash mr-1 sm:mr-2"></i>
-                      <span className="hidden sm:inline">Elimina</span>
+                      <span className="hidden sm:inline">{t('myPages.delete')}</span>
                       <span className="sm:hidden">Del</span>
                     </button>
                   </div>
@@ -297,7 +299,7 @@ export default function MyPagesPage({
           >
             <p className="text-sm" style={{ color: 'var(--linktree-text-secondary)' }}>
               <i className="fas fa-chart-bar mr-2"></i>
-              Totale Pagine Create: <strong style={{ color: 'var(--linktree-text-primary)' }}>{myPages.length}</strong>
+              {t('myPages.totalPages', { count: myPages.length })}
             </p>
           </div>
         )}
@@ -312,11 +314,11 @@ export default function MyPagesPage({
           >
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <i className="fas fa-exclamation-triangle text-red-500"></i>
-              <span style={{ color: 'var(--linktree-text-primary)' }}>Conferma Eliminazione</span>
+              <span style={{ color: 'var(--linktree-text-primary)' }}>{t('deleteModal.title')}</span>
             </h2>
             
             <p className="mb-2" style={{ color: 'var(--linktree-text-primary)' }}>
-              Sei sicuro di voler eliminare questa pagina?
+              {t('deleteModal.message')}
             </p>
             
             <div
@@ -336,7 +338,7 @@ export default function MyPagesPage({
             </div>
 
             <p className="text-sm mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-              Questa azione non può essere annullata e tutti i dati verranno rimossi definitivamente.
+              {t('deleteModal.warning')}
             </p>
 
             <div className="flex gap-3">
@@ -353,7 +355,7 @@ export default function MyPagesPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                Annulla
+                {t('deleteModal.cancel')}
               </button>
               <button
                 onClick={confirmDelete}
@@ -363,12 +365,12 @@ export default function MyPagesPage({
                 {isDeleting ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2"></i>
-                    Eliminazione...
+                    {t('deleteModal.deleting')}
                   </>
                 ) : (
                   <>
                     <i className="fas fa-trash mr-2"></i>
-                    Elimina
+                    {t('myPages.delete')}
                   </>
                 )}
               </button>

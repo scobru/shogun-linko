@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { ShogunCoreInstance, UserInfo, ComponentData, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
@@ -23,6 +24,7 @@ export default function ViewerPage({
   theme,
   toggleTheme,
 }: ViewerPageProps) {
+  const { t } = useTranslation();
   const { pageId, slug } = useParams<{ pageId?: string; slug?: string }>();
   const navigate = useNavigate();
   const [resolvedPageId, setResolvedPageId] = useState<string | null>(null);
@@ -169,11 +171,11 @@ export default function ViewerPage({
       if (currentUser) {
         await shogun.db.user.get('pages').get(resolvedPageId).put(null);
       }
-      alert('Pagina eliminata con successo!');
+      alert(t('deleteModal.success'));
       navigate('/');
     } catch (error) {
       console.error('Error deleting page:', error);
-      alert('Errore durante l\'eliminazione.');
+      alert(t('common.error'));
     } finally {
       setIsDeleting(false);
       setShowDeleteModal(false);
@@ -197,17 +199,17 @@ export default function ViewerPage({
         <div className="max-w-lg mx-auto text-center py-16">
           <i className="fas fa-exclamation-triangle text-6xl mb-4" style={{ color: 'var(--linktree-accent)' }}></i>
           <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--linktree-text-primary)' }}>
-            Pagina Non Trovata
+            {t('viewer.notFound.title')}
           </h2>
           <p className="mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-            Lo slug "{slug}" non corrisponde a nessuna pagina esistente.
+            {t('viewer.notFound.message', { slug })}
           </p>
           <button
             onClick={() => navigate('/')}
             className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition"
           >
             <i className="fas fa-home mr-2"></i>
-            Torna alla Home
+            {t('viewer.notFound.backHome')}
           </button>
         </div>
       </div>
@@ -247,7 +249,7 @@ export default function ViewerPage({
             <div className="text-center py-8">
               <i className="fas fa-spinner fa-spin text-2xl" style={{ color: 'var(--linktree-text-secondary)' }}></i>
               <p className="mt-2" style={{ color: 'var(--linktree-text-secondary)' }}>
-                Caricamento...
+                {t('viewer.loading')}
               </p>
             </div>
           ) : components.length > 0 ? (
@@ -256,7 +258,7 @@ export default function ViewerPage({
             ))
           ) : (
             <div className="text-center py-8" style={{ color: 'var(--linktree-text-secondary)' }}>
-              Questa pagina non ha ancora nessun contenuto.
+              {t('viewer.noContent')}
             </div>
           )}
         </div>
@@ -285,8 +287,8 @@ export default function ViewerPage({
                   }}
                 >
                   <i className="fas fa-arrow-left mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">Previous</span>
-                  <span className="sm:hidden">Prev</span>
+                  <span className="hidden sm:inline">{t('viewer.navigation.previous')}</span>
+                  <span className="sm:hidden">{t('viewer.navigation.prev')}</span>
                 </button>
                 <button
                   onClick={navigateToRandom}
@@ -297,7 +299,7 @@ export default function ViewerPage({
                   }}
                 >
                   <i className="fas fa-random mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">Random</span>
+                  <span className="hidden sm:inline">{t('viewer.navigation.random')}</span>
                   <span className="sm:hidden">🎲</span>
                 </button>
                 <button
@@ -310,13 +312,13 @@ export default function ViewerPage({
                     borderColor: 'var(--linktree-outline)',
                   }}
                 >
-                  <span className="hidden sm:inline">Next</span>
-                  <span className="sm:hidden">Next</span>
+                  <span className="hidden sm:inline">{t('viewer.navigation.next')}</span>
+                  <span className="sm:hidden">{t('viewer.navigation.next')}</span>
                   <i className="fas fa-arrow-right ml-1 sm:ml-2"></i>
                 </button>
               {currentPageIndex >= 0 && (
                 <span className="text-xs sm:text-sm ml-2 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
-                  {currentPageIndex + 1} of {allPages.length}
+                  {t('viewer.navigation.ofPages', { current: currentPageIndex + 1, total: allPages.length })}
                 </span>
               )}
             </div>
@@ -333,13 +335,13 @@ export default function ViewerPage({
           >
             <h2 className="text-xl font-bold mb-4 flex items-center justify-center gap-2">
               <i className="fas fa-exclamation-triangle text-red-500"></i>
-              <span style={{ color: 'var(--linktree-text-primary)' }}>Conferma Eliminazione</span>
+              <span style={{ color: 'var(--linktree-text-primary)' }}>{t('deleteModal.title')}</span>
             </h2>
             <p className="mb-4" style={{ color: 'var(--linktree-text-secondary)' }}>
-              Sei sicuro di voler eliminare questa pagina?
+              {t('deleteModal.message')}
             </p>
             <p className="text-sm mb-6" style={{ color: 'var(--linktree-text-secondary)' }}>
-              Questa azione non può essere annullata e tutti i dati verranno rimossi definitivamente.
+              {t('deleteModal.warning')}
             </p>
             <div className="flex gap-3 justify-center">
               <button
@@ -351,7 +353,7 @@ export default function ViewerPage({
                   borderColor: 'var(--linktree-outline)',
                 }}
               >
-                Annulla
+                {t('deleteModal.cancel')}
               </button>
               <button
                 onClick={deletePage}
@@ -359,9 +361,9 @@ export default function ViewerPage({
                 className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition disabled:opacity-50"
               >
                 {isDeleting ? (
-                  <><i className="fas fa-spinner fa-spin mr-2"></i>Eliminazione...</>
+                  <><i className="fas fa-spinner fa-spin mr-2"></i>{t('deleteModal.deleting')}</>
                 ) : (
-                  <><i className="fas fa-trash mr-2"></i>Elimina</>
+                  <><i className="fas fa-trash mr-2"></i>{t('deleteModal.confirm')}</>
                 )}
               </button>
             </div>

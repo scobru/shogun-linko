@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ComponentData } from '../../types';
 
 interface LinkComponentProps {
@@ -15,6 +16,8 @@ export default function LinkComponent({
   onMoveDown,
   onRemove,
 }: LinkComponentProps) {
+  const { t } = useTranslation();
+  
   return (
     <div
       className="component-wrapper relative p-4 border rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
@@ -51,7 +54,7 @@ export default function LinkComponent({
       <div className="space-y-2">
         <input
           type="text"
-          placeholder="Titolo del link"
+          placeholder={t('components.link.titlePlaceholder')}
           value={data.title || ''}
           onChange={(e) => onUpdate({ title: e.target.value })}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
@@ -63,7 +66,7 @@ export default function LinkComponent({
         />
         <input
           type="url"
-          placeholder="https://esempio.com"
+          placeholder={t('components.link.urlPlaceholder')}
           value={data.url || ''}
           onChange={(e) => onUpdate({ url: e.target.value })}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
@@ -75,7 +78,7 @@ export default function LinkComponent({
         />
         <div className="flex items-center gap-2">
           <label className="text-xs" style={{ color: 'var(--linktree-text-secondary)' }}>
-            Icona:
+            {t('components.link.icon')}
           </label>
           <select
             value={data.icon || ''}
@@ -87,15 +90,15 @@ export default function LinkComponent({
               borderColor: 'var(--linktree-outline)',
             }}
           >
-            <option value="">Nessuna</option>
-            <option value="fas fa-globe">Globo</option>
-            <option value="fab fa-instagram">Instagram</option>
-            <option value="fab fa-linkedin">LinkedIn</option>
-            <option value="fab fa-youtube">YouTube</option>
-            <option value="fab fa-twitter">Twitter</option>
-            <option value="fab fa-github">GitHub</option>
-            <option value="fas fa-music">Musica</option>
-            <option value="fas fa-envelope">Email</option>
+            <option value="">{t('components.link.icons.none')}</option>
+            <option value="fas fa-globe">{t('components.link.icons.globe')}</option>
+            <option value="fab fa-instagram">{t('components.link.icons.instagram')}</option>
+            <option value="fab fa-linkedin">{t('components.link.icons.linkedin')}</option>
+            <option value="fab fa-youtube">{t('components.link.icons.youtube')}</option>
+            <option value="fab fa-twitter">{t('components.link.icons.twitter')}</option>
+            <option value="fab fa-github">{t('components.link.icons.github')}</option>
+            <option value="fas fa-music">{t('components.link.icons.music')}</option>
+            <option value="fas fa-envelope">{t('components.link.icons.email')}</option>
           </select>
         </div>
       </div>
