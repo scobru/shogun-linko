@@ -1,38 +1,27 @@
+/* Use Shogun Theme tokens (must come first) */
+@import 'shogun-theme/styles/variables.css';
+@import 'shogun-theme/styles/base.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Linktree Inspired Color Scheme */
+/* Map LINKO variables to Shogun theme tokens (which react to data-theme) */
 :root {
-  --linktree-primary: #000000;
-  --linktree-secondary: #666666;
-  --linktree-accent: #ff0066;
-  --linktree-success: #00d4aa;
-  --linktree-warning: #ffb800;
-  --linktree-surface: #ffffff;
-  --linktree-surface-variant: #f7f9fc;
-  --linktree-outline: #e5e7eb;
-  --linktree-text-primary: #000000;
-  --linktree-text-secondary: #666666;
-  --linktree-text-disabled: #9ca3af;
-  --linktree-shadow: rgba(0, 0, 0, 0.1);
-  --linktree-shadow-elevated: rgba(0, 0, 0, 0.05);
-  --linktree-background: #f7f9fc;
-}
-
-/* Dark mode colors */
-[data-theme="dark"] {
-  --linktree-primary: #ffffff;
-  --linktree-secondary: #a1a1aa;
-  --linktree-surface: #1a1a1a;
-  --linktree-surface-variant: #262626;
-  --linktree-outline: #404040;
-  --linktree-text-primary: #ffffff;
-  --linktree-text-secondary: #a1a1aa;
-  --linktree-text-disabled: #71717a;
-  --linktree-shadow: rgba(0, 0, 0, 0.3);
-  --linktree-shadow-elevated: rgba(0, 0, 0, 0.15);
-  --linktree-background: #0a0a0a;
+  --linktree-primary: var(--shogun-primary);
+  --linktree-secondary: var(--text-secondary);
+  --linktree-accent: var(--shogun-accent);
+  --linktree-success: var(--shogun-success);
+  --linktree-warning: var(--shogun-warning);
+  --linktree-surface: var(--card-bg);
+  --linktree-surface-variant: var(--bg-secondary);
+  --linktree-outline: var(--border-color);
+  --linktree-text-primary: var(--text-primary);
+  --linktree-text-secondary: var(--text-secondary);
+  --linktree-text-disabled: var(--text-tertiary);
+  --linktree-shadow: var(--card-shadow);
+  --linktree-shadow-elevated: var(--card-shadow);
+  --linktree-background: var(--bg-primary);
 }
 
 body {

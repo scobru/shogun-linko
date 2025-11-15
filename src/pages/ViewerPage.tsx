@@ -1,14 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ShogunCoreInstance, UserInfo, ComponentData, PageData } from '../types';
+import type { UserInfo, ComponentData, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
 import Header from '../components/shared/Header';
 import RenderedComponent from '../components/renderer/RenderedComponent';
+import { ShogunCore } from 'shogun-core';
 
 interface ViewerPageProps {
-  shogun: ShogunCoreInstance | null;
+  shogun:  ShogunCore | null;
   currentUser: UserInfo | null;
   isLoggedIn: boolean;
   logout: () => void;
@@ -41,8 +42,9 @@ export default function ViewerPage({
   // Resolve slug to pageId if slug is provided
   useEffect(() => {
     if (slug && shogun && !pageId) {
+
       // This is a custom slug route, resolve it to pageId
-      shogun.db.get('slugs').get(slug).once((resolvedId: string) => {
+      shogun.gun.get('slugs').get(slug).once((resolvedId: string) => {
         if (resolvedId) {
           setResolvedPageId(resolvedId);
         } else {
@@ -68,7 +70,7 @@ export default function ViewerPage({
 
     setIsLoading(true);
     try {
-      const pageNode = shogun.db.get('pages').get(id);
+      const pageNode = shogun.gun.get('pages').get(id);
 
       pageNode.get('title').once((title: string) => {
         if (title) {
@@ -108,8 +110,8 @@ export default function ViewerPage({
     if (!shogun) return;
 
     const pages: PageData[] = [];
-    shogun.db.get('pages').map().once((pageData: any, id: string) => {
-      if (pageData && pageData.title) {
+    shogun.gun.get('pages').map().once((pageData: any, id: string) => {
+      if (pageData && pageData.title && !pageData.deleted) {
         pages.push({
           id,
           title: pageData.title,
@@ -125,7 +127,7 @@ export default function ViewerPage({
       pages.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       setAllPages(pages);
       const index = pages.findIndex(p => p.id === resolvedPageId);
-      setCurrentPageIndex(index);
+      setCurrentPageIndex(index >= 0 ? index : -1);
     }, 1000);
   };
 
@@ -161,15 +163,15 @@ export default function ViewerPage({
     setIsDeleting(true);
     try {
       // Delete the page
-      await shogun.db.get('pages').get(resolvedPageId).put(null);
+      shogun.gun.get('pages').get(resolvedPageId).put(null);
       
       // Delete slug mapping if exists
       if (slug) {
-        await shogun.db.get('slugs').get(slug).put(null);
+        shogun.gun.get('slugs').get(slug).put(null);
       }
       
       if (currentUser) {
-        await shogun.db.user.get('pages').get(resolvedPageId).put(null);
+        shogun.gun.user().get('pages').get(resolvedPageId).put(null);
       }
       alert(t('deleteModal.success'));
       navigate('/');
@@ -217,7 +219,7 @@ export default function ViewerPage({
   }
 
   return (
-    <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl pb-64">
+    <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl">
       <Header
         currentUser={currentUser}
         isLoggedIn={isLoggedIn}
@@ -233,14 +235,67 @@ export default function ViewerPage({
         onAvatarUpload={uploadAvatar}
       />
 
-        {/* Page Title */}
-        {pageTitle && (
-          <div className="max-w-sm sm:max-w-lg mx-auto mb-6">
-            <h1 className="text-2xl sm:text-3xl font-semibold break-words text-center" style={{ color: 'var(--linktree-text-primary)' }}>
-              {pageTitle}
-            </h1>
+      {/* Navigation */}
+      {allPages.length >= 1 && (
+        <div className="mb-6 py-3 px-2 sm:px-4">
+          <div className="container mx-auto max-w-4xl">
+            <div className="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
+              <button
+                onClick={navigateToPrevious}
+                disabled={currentPageIndex <= 0}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm disabled:opacity-50"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--linktree-text-primary)',
+                }}
+              >
+                <i className="fas fa-arrow-left mr-1 sm:mr-2"></i>
+                <span className="hidden sm:inline">{t('viewer.navigation.previous')}</span>
+                <span className="sm:hidden">{t('viewer.navigation.prev')}</span>
+              </button>
+              <button
+                onClick={navigateToRandom}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--linktree-text-primary)',
+                }}
+              >
+                <i className="fas fa-random mr-1 sm:mr-2"></i>
+                <span className="hidden sm:inline">{t('viewer.navigation.random')}</span>
+                <span className="sm:hidden">🎲</span>
+              </button>
+              <button
+                onClick={navigateToNext}
+                disabled={currentPageIndex >= allPages.length - 1}
+                className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm disabled:opacity-50"
+                style={{
+                  backgroundColor: 'transparent',
+                  color: 'var(--linktree-text-primary)',
+                }}
+              >
+                <span className="hidden sm:inline">{t('viewer.navigation.next')}</span>
+                <span className="sm:hidden">{t('viewer.navigation.next')}</span>
+                <i className="fas fa-arrow-right ml-1 sm:ml-2"></i>
+              </button>
+              {currentPageIndex >= 0 && (
+                <span className="text-xs sm:text-sm ml-2 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
+                  {t('viewer.navigation.ofPages', { current: currentPageIndex + 1, total: allPages.length })}
+                </span>
+              )}
+            </div>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Page Title */}
+      {pageTitle && (
+        <div className="max-w-sm sm:max-w-lg mx-auto mb-6">
+          <h1 className="text-2xl sm:text-3xl font-semibold break-words text-center" style={{ color: 'var(--linktree-text-primary)' }}>
+            {pageTitle}
+          </h1>
+        </div>
+      )}
 
       {/* Page Content */}
       <div className="max-w-sm sm:max-w-lg mx-auto">
@@ -263,68 +318,6 @@ export default function ViewerPage({
           )}
         </div>
       </div>
-
-        {/* Navigation Footer */}
-        {allPages.length > 1 && (
-          <footer
-            className="fixed bottom-0 left-0 right-0 py-2 sm:py-3 px-2 sm:px-4 border-t z-40"
-            style={{
-              backgroundColor: 'var(--linktree-surface)',
-              borderColor: 'var(--linktree-outline)',
-              backdropFilter: 'blur(12px)',
-            }}
-          >
-            <div className="container mx-auto max-w-4xl">
-              <div className="flex justify-center items-center gap-2 sm:gap-4 flex-wrap">
-                <button
-                  onClick={navigateToPrevious}
-                  disabled={currentPageIndex <= 0}
-                  className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
-                  style={{
-                    backgroundColor: 'var(--linktree-surface-variant)',
-                    color: 'var(--linktree-text-primary)',
-                    borderColor: 'var(--linktree-outline)',
-                  }}
-                >
-                  <i className="fas fa-arrow-left mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">{t('viewer.navigation.previous')}</span>
-                  <span className="sm:hidden">{t('viewer.navigation.prev')}</span>
-                </button>
-                <button
-                  onClick={navigateToRandom}
-                  className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm"
-                  style={{
-                    backgroundColor: 'var(--linktree-warning)',
-                    color: 'var(--linktree-text-primary)',
-                  }}
-                >
-                  <i className="fas fa-random mr-1 sm:mr-2"></i>
-                  <span className="hidden sm:inline">{t('viewer.navigation.random')}</span>
-                  <span className="sm:hidden">🎲</span>
-                </button>
-                <button
-                  onClick={navigateToNext}
-                  disabled={currentPageIndex >= allPages.length - 1}
-                  className="px-2 sm:px-4 py-1 sm:py-2 font-semibold rounded-lg transition text-xs sm:text-sm shadow-sm disabled:opacity-50"
-                  style={{
-                    backgroundColor: 'var(--linktree-surface-variant)',
-                    color: 'var(--linktree-text-primary)',
-                    borderColor: 'var(--linktree-outline)',
-                  }}
-                >
-                  <span className="hidden sm:inline">{t('viewer.navigation.next')}</span>
-                  <span className="sm:hidden">{t('viewer.navigation.next')}</span>
-                  <i className="fas fa-arrow-right ml-1 sm:ml-2"></i>
-                </button>
-              {currentPageIndex >= 0 && (
-                <span className="text-xs sm:text-sm ml-2 sm:ml-4" style={{ color: 'var(--linktree-text-secondary)' }}>
-                  {t('viewer.navigation.ofPages', { current: currentPageIndex + 1, total: allPages.length })}
-                </span>
-              )}
-            </div>
-          </div>
-        </footer>
-      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

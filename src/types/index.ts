@@ -50,6 +50,7 @@ export interface UserInfo {
 
 export interface ShogunCoreInstance {
   db: any;
+  gun: any;
   login: (username: string, password: string) => Promise<any>;
   signUp: (username: string, password: string) => Promise<any>;
   logout: () => void;

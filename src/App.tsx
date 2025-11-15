@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useShogun } from './hooks/useShogun';
 import { useTheme } from './hooks/useTheme';
@@ -9,10 +10,51 @@ import AboutPage from './pages/AboutPage';
 import LegacyRedirect from './components/shared/LegacyRedirect';
 import Disclaimer from './components/shared/Disclaimer';
 
+import { sitesData, mountOnionRing } from 'shogun-onion';
+import 'shogun-onion/onion.css';
+
 function App() {
   const shogunContext = useShogun();
   const themeContext = useTheme();
   const disclaimerContext = useDisclaimer();
+
+  // Mount onion widget once app is ready and disclaimer is accepted
+  useEffect(() => {
+    // Only mount if disclaimer is accepted (element will be in DOM)
+    if (!disclaimerContext.hasAgreedToDisclaimer) return;
+    
+    async function mount() {
+      try {
+        // Wait for the element to exist in DOM
+        let attempts = 0;
+        const maxAttempts = 50;
+        while (attempts < maxAttempts) {
+          const element = document.getElementById('shogun-ring');
+          if (element) {
+            await mountOnionRing({
+              ringName: 'Shogun Network',
+              ringID: 'shogun-ring',
+              useIndex: true,
+              useRandom: true,
+              sitesData: sitesData,
+            });
+            console.log('onion widget mounted');
+            return;
+          }
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        console.warn('onion widget: element #shogun-ring not found after', maxAttempts * 100, 'ms');
+      } catch (err) {
+        // Silently ignore if package not installed yet
+        console.debug('onion widget not mounted:', err);
+      }
+    }
+    mount();
+    return () => {
+        console.log('onion widget unmounted');
+    };
+  }, [disclaimerContext.hasAgreedToDisclaimer]);
 
   if (!shogunContext.isInitialized || disclaimerContext.isLoading) {
     return (
@@ -45,6 +87,8 @@ function App() {
         {/* Catch-all route for custom slugs - must be last */}
         <Route path="/:slug" element={<ViewerPage {...shogunContext} {...themeContext} />} />
       </Routes>
+      {/* Onion ring widget mount point */}
+      <div id="shogun-ring"></div>
     </div>
   );
 }

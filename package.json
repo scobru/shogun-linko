@@ -10,13 +10,15 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "gun-relays": "git+https://github.com/scobru/shogun-relays.git",
     "i18next": "^25.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^16.0.1",
     "react-router-dom": "^6.21.0",
-    "shogun-core": "^3.3.7",
+    "shogun-core": "^6.4.5",
+    "shogun-onion": "^0.1.8",
+    "shogun-relays": "latest",
+    "shogun-theme": "^1.0.2",
     "vercel": "^48.4.0"
   },
   "devDependencies": {

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { ShogunCoreInstance, UserInfo, PageData } from '../types';
+import type { UserInfo, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
 import Header from '../components/shared/Header';
+import { ShogunCore } from 'shogun-core';
 
 interface MyPagesPageProps {
-  shogun: ShogunCoreInstance | null;
+  shogun: ShogunCore | null;
   currentUser: UserInfo | null;
   isLoggedIn: boolean;
   logout: () => void;
@@ -50,7 +51,7 @@ export default function MyPagesPage({
     const pages: PageData[] = [];
 
     // Load all pages and filter by author
-    shogun.db.get('pages').map().once((pageData: any, pageId: string) => {
+    shogun.gun.get('pages').map().once((pageData: any, pageId: string) => {
       if (pageData && pageData.author === currentUser.pub && !pageData.deleted) {
         pages.push({
           id: pageId,
@@ -82,11 +83,11 @@ export default function MyPagesPage({
     setIsDeleting(true);
       try {
         // Mark page as deleted
-        await shogun.db.get('pages').get(pageToDelete.id).put({ deleted: true, deletedAt: Date.now() });
+        shogun.gun.get('pages').get(pageToDelete.id).put({ deleted: true, deletedAt: Date.now() });
         
         // Delete slug mapping if exists
         if (pageToDelete.slug) {
-          await shogun.db.get('slugs').get(pageToDelete.slug).put(null);
+          shogun.gun.get('slugs').get(pageToDelete.slug).put(null);
         }
         
         // Remove from local state
