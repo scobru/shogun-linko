@@ -4849,18 +4849,18 @@ shogun-core@^6.4.5:
     uuid "^11.1.0"
     vm-browserify "^1.1.2"
 
-shogun-onion@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/shogun-onion/-/shogun-onion-0.1.8.tgz#c5894c431963ff22b552f4c6d49bb3f852b87572"
-  integrity sha512-7YXFxIxkGAWfIoqBiJESoBDzNy2QCr0Co0xDR0RAQ01bcgiC/hjS1ipoCWI6FWhjMWGCq17XoMQKZWcuxv2jKA==
+shogun-onion@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/shogun-onion/-/shogun-onion-0.1.12.tgz#ec9efe1c8db03d025e2c0b70cbfa23694973bf55"
+  integrity sha512-0EcPDhhAfSjySaXeU+CniDCzbD8Kv4Am12RJARjWDToW+/S5IclVNeZVqcRmo2JNVNDdT/BcSmeUzxm1HDXBnA==
   dependencies:
     shogun-theme latest
     vercel "^48.10.2"
 
-shogun-relays@latest:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/shogun-relays/-/shogun-relays-1.0.5.tgz#8f84e51ed755450459e98027439b28bdb3663d88"
-  integrity sha512-eEnIgI460aTNiw5QslLkme5Mee041mmoVpe4R7zfSaGId8oZXzHeQCO32jaDaKnIk7eZu45VJOToM7X4QqTu0w==
+shogun-relays@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/shogun-relays/-/shogun-relays-1.0.8.tgz#970a2201a58377055c6ed84f2d39e6946014dc76"
+  integrity sha512-QU0DMZllUZ1F/+lLdYEF3m6rJh7nlw/9w75B6ufrgjHTb7l1DDBIYImVGY37p5x0geJ+YobRLhr551h2pAoXlA==
   dependencies:
     get-urls "^10.0.1"
     gun "^0.2020.1241"
