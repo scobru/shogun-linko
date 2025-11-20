@@ -49,6 +49,8 @@
   "viewer": {
     "loading": "Loading...",
     "noContent": "This page has no content yet.",
+    "enterFullscreen": "Fullscreen",
+    "exitFullscreen": "Exit",
     "navigation": {
       "previous": "Previous",
       "prev": "Prev",

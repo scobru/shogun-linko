@@ -37,6 +37,7 @@ export default function ViewerPage({
   const [currentPageIndex, setCurrentPageIndex] = useState(-1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { avatarUrl, uploadAvatar } = useUserAvatar(shogun, currentUser);
 
   // Resolve slug to pageId if slug is provided
@@ -218,6 +219,71 @@ export default function ViewerPage({
     );
   }
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  // If fullscreen, render fullscreen content
+  if (isFullscreen) {
+    return (
+      <div 
+        className="fixed inset-0 z-50 overflow-y-auto"
+        style={{ backgroundColor: 'var(--linktree-background)' }}
+      >
+        {/* Fullscreen Exit Button */}
+        <button
+          onClick={toggleFullscreen}
+          className="fixed top-4 right-4 z-60 px-4 py-2 rounded-full shadow-lg transition hover:scale-110"
+          style={{
+            backgroundColor: 'var(--linktree-surface)',
+            color: 'var(--linktree-text-primary)',
+            borderColor: 'var(--linktree-outline)',
+            border: '2px solid var(--linktree-outline)',
+          }}
+          title={t('viewer.exitFullscreen')}
+        >
+          <i className="fas fa-compress-alt mr-2"></i>
+          <span className="hidden sm:inline">{t('viewer.exitFullscreen') || 'Esci'}</span>
+        </button>
+
+        {/* Fullscreen Content */}
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+          {/* Page Title */}
+          {pageTitle && (
+            <div className="max-w-2xl w-full mb-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold break-words text-center" style={{ color: 'var(--linktree-text-primary)' }}>
+                {pageTitle}
+              </h1>
+            </div>
+          )}
+
+          {/* Page Content */}
+          <div className="max-w-2xl w-full">
+            <div className="space-y-4">
+              {isLoading ? (
+                <div className="text-center py-16">
+                  <i className="fas fa-spinner fa-spin text-4xl" style={{ color: 'var(--linktree-text-secondary)' }}></i>
+                  <p className="mt-4 text-lg" style={{ color: 'var(--linktree-text-secondary)' }}>
+                    {t('viewer.loading')}
+                  </p>
+                </div>
+              ) : components.length > 0 ? (
+                components.map((comp) => (
+                  <RenderedComponent key={comp.id} component={comp} />
+                ))
+              ) : (
+                <div className="text-center py-16 text-lg" style={{ color: 'var(--linktree-text-secondary)' }}>
+                  {t('viewer.noContent')}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal view with header and navigation
   return (
     <div className="container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl">
       <Header
@@ -298,7 +364,23 @@ export default function ViewerPage({
       )}
 
       {/* Page Content */}
-      <div className="max-w-sm sm:max-w-lg mx-auto">
+      <div className="max-w-sm sm:max-w-lg mx-auto relative">
+        {/* Fullscreen Button */}
+        <button
+          onClick={toggleFullscreen}
+          className="absolute -top-12 right-0 px-3 py-2 rounded-full transition hover:scale-110 shadow-md"
+          style={{
+            backgroundColor: 'var(--linktree-surface)',
+            color: 'var(--linktree-text-primary)',
+            borderColor: 'var(--linktree-outline)',
+            border: '2px solid var(--linktree-outline)',
+          }}
+          title={t('viewer.enterFullscreen')}
+        >
+          <i className="fas fa-expand-alt mr-1 sm:mr-2"></i>
+          <span className="hidden sm:inline text-xs">{t('viewer.enterFullscreen') || 'Schermo intero'}</span>
+        </button>
+
         <div className="space-y-2">
           {isLoading ? (
             <div className="text-center py-8">

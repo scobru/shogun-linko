@@ -49,6 +49,8 @@
   "viewer": {
     "loading": "Caricamento...",
     "noContent": "Questa pagina non ha ancora nessun contenuto.",
+    "enterFullscreen": "Schermo intero",
+    "exitFullscreen": "Esci",
     "navigation": {
       "previous": "Previous",
       "prev": "Prev",
