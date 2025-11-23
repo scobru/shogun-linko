@@ -2293,6 +2293,11 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.2.1.tgz#d19b5c2b584e8f57361e7129e160a75aba418e40"
   integrity sha512-98XGutrXoh75MlgLihlNxAGbUuFQc7l1cqcnEZlLNKc0UrVdPndgmaDmYTDDh929VS/eqTZV0rozmhu2qqT1/g==
 
+daisyui@^5.5.5:
+  version "5.5.5"
+  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-5.5.5.tgz#900ae8a83fc46fbf7db02b0230988d5801c56d74"
+  integrity sha512-ekvI93ZkWIJoCOtDl0D2QMxnWvTejk9V5nWBqRv+7t0xjiBXqAK5U6o6JE2RPvlIC3EqwNyUoIZSdHX9MZK3nw==
+
 data-uri-to-buffer@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/data-uri-to-buffer/-/data-uri-to-buffer-4.0.1.tgz#d8feb2b2881e6a4f58c2e08acfd0e2834e26222e"
@@ -4849,14 +4854,6 @@ shogun-core@^6.4.5:
     uuid "^11.1.0"
     vm-browserify "^1.1.2"
 
-shogun-onion@^0.1.16:
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/shogun-onion/-/shogun-onion-0.1.16.tgz#f5a427a040f1cb6747ecd48358543c5e57748f22"
-  integrity sha512-9YVn1F6smQShtMQefTYmFRxaZe3ZWq/VIl1NLGNV0i4kBXFziZU06FnVhagqXMmyouvyKmmSWHg8PXZTaZ5sKA==
-  dependencies:
-    shogun-theme latest
-    vercel "^48.10.2"
-
 shogun-relays@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/shogun-relays/-/shogun-relays-1.0.8.tgz#970a2201a58377055c6ed84f2d39e6946014dc76"
@@ -4865,11 +4862,6 @@ shogun-relays@^1.0.8:
     get-urls "^10.0.1"
     gun "^0.2020.1241"
     node-fetch "^3.1.0"
-
-shogun-theme@^1.0.2, shogun-theme@latest:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/shogun-theme/-/shogun-theme-1.0.2.tgz#7ab4d491c28363b7980737ac108b4f5f93b99149"
-  integrity sha512-MJmEPtGToRmgbPVfRFeKwL/7V6le6gjC8ag1jfspFjZ2ustmLy+bRs8GykhboFbYVbe8RHIXQjvxhASTNvP+3w==
 
 side-channel-list@^1.0.0:
   version "1.0.0"
@@ -5472,7 +5464,7 @@ v8-compile-cache-lib@^3.0.1:
   resolved "https://registry.yarnpkg.com/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz#6336e8d71965cb3d35a1bbb7868445a7c05264bf"
   integrity sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==
 
-vercel@^48.10.2, vercel@^48.4.0:
+vercel@^48.4.0:
   version "48.10.2"
   resolved "https://registry.yarnpkg.com/vercel/-/vercel-48.10.2.tgz#2ce81afb82d5d61538becf9e329443fdc4574bfd"
   integrity sha512-xGmb5uzlaHO5TiszILTDSVQJnpda22EBnuHk1x49l9VpJmDaFMdURDvIf+pApC2g4cc4f3tUI7xWjlYcXkLViQ==

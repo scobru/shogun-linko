@@ -33,7 +33,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['shogun-relays'],
-    exclude: ['shogun-onion'],
     esbuildOptions: {
       define: {
         global: 'globalThis',

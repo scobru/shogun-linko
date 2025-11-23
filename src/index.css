@@ -1,33 +1,29 @@
-/* Use Shogun Theme tokens (must come first) */
-@import 'shogun-theme/styles/variables.css';
-@import 'shogun-theme/styles/base.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Map LINKO variables to Shogun theme tokens (which react to data-theme) */
+/* Map LINKO variables to DaisyUI theme tokens */
 :root {
-  --linktree-primary: var(--shogun-primary);
-  --linktree-secondary: var(--text-secondary);
-  --linktree-accent: var(--shogun-accent);
-  --linktree-success: var(--shogun-success);
-  --linktree-warning: var(--shogun-warning);
-  --linktree-surface: var(--card-bg);
-  --linktree-surface-variant: var(--bg-secondary);
-  --linktree-outline: var(--border-color);
-  --linktree-text-primary: var(--text-primary);
-  --linktree-text-secondary: var(--text-secondary);
-  --linktree-text-disabled: var(--text-tertiary);
-  --linktree-shadow: var(--card-shadow);
-  --linktree-shadow-elevated: var(--card-shadow);
-  --linktree-background: var(--bg-primary);
+  --linktree-primary: hsl(var(--p));
+  --linktree-secondary: hsl(var(--s));
+  --linktree-accent: hsl(var(--a));
+  --linktree-success: hsl(var(--su));
+  --linktree-warning: hsl(var(--wa));
+  --linktree-surface: hsl(var(--b2));
+  --linktree-surface-variant: hsl(var(--b3));
+  --linktree-outline: hsl(var(--bc) / 0.2);
+  --linktree-text-primary: hsl(var(--bc));
+  --linktree-text-secondary: hsl(var(--bc) / 0.7);
+  --linktree-text-disabled: hsl(var(--bc) / 0.5);
+  --linktree-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --linktree-shadow-elevated: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --linktree-background: hsl(var(--b1));
 }
 
 body {
   background-color: var(--linktree-background);
   color: var(--linktree-text-primary);
-  font-family: 'Inter', sans-serif;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 400;
   line-height: 1.5;
 }

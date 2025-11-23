@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { UserInfo, ComponentData, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
+import { useFullscreen } from '../contexts/FullscreenContext';
 import Header from '../components/shared/Header';
 import RenderedComponent from '../components/renderer/RenderedComponent';
 import { ShogunCore } from 'shogun-core';
@@ -37,7 +38,7 @@ export default function ViewerPage({
   const [currentPageIndex, setCurrentPageIndex] = useState(-1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const { isFullscreen, setIsFullscreen } = useFullscreen();
   const { avatarUrl, uploadAvatar } = useUserAvatar(shogun, currentUser);
 
   // Resolve slug to pageId if slug is provided
