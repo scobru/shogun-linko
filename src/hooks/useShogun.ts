@@ -3,7 +3,7 @@ import type { UserInfo } from "../types";
 import Gun from "gun";
 import "gun/sea";
 import { ShogunCore } from "shogun-core";
-import  'shogun-relays';
+import 'shogun-relays';
 
 declare global {
   interface Window {
@@ -29,29 +29,29 @@ export const useShogun = () => {
 
         const gun = Gun({
           peers: freshRelays,
-            localStorage: true,
-            multicast: false,
-            radisk: true,
-            wire: true,
-            rtc: {
-              iceServers: [
-                { urls: "stun:stun.l.google.com:19302" },
-                { urls: "stun:stun.cloudflare.com:3478" },
-                { urls: "stun:stun.services.mozilla.com" },
-              ],
-              dataChannel: { ordered: false, maxRetransmits: 2 },
-              sdp: {
-                mandatory: {
-                  OfferToReceiveAudio: false,
-                  OfferToReceiveVideo: false,
-                },
+          localStorage: true,
+          multicast: false,
+          radisk: true,
+          wire: true,
+          rtc: {
+            iceServers: [
+              { urls: "stun:stun.l.google.com:19302" },
+              { urls: "stun:stun.cloudflare.com:3478" },
+              { urls: "stun:stun.services.mozilla.com" },
+            ],
+            dataChannel: { ordered: false, maxRetransmits: 2 },
+            sdp: {
+              mandatory: {
+                OfferToReceiveAudio: false,
+                OfferToReceiveVideo: false,
               },
-              max: 55,
-              room: "linkthree-webring",
             },
-          });
+            max: 55,
+            room: "linkthree-webring",
+          },
+        });
 
-        
+
         const shogunInstance = new ShogunCore({ gunInstance: gun });
 
         setShogun(shogunInstance);
@@ -63,10 +63,10 @@ export const useShogun = () => {
         console.error("Error initializing Shogun:", error);
         // Fallback to default peers if relay fetch fails
         const fallbackGun = Gun({
-          peers: ["https://relay.peer.ooo/gun", "https://peer.wallie.io/gun"],
-          localStorage: true,
+          peers: ["https://shogun-relay.scobrudot.dev/gun", "https://peer.wallie.io/gun"],
+          localStorage: false,
           multicast: false,
-          radisk: true,
+          radisk: false,
           wire: true,
           rtc: {
             iceServers: [

@@ -23,7 +23,7 @@
 body {
   background-color: var(--linktree-background);
   color: var(--linktree-text-primary);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Google Sans Flex', sans-serif;
   font-weight: 400;
   line-height: 1.5;
 }
