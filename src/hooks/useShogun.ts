@@ -14,6 +14,13 @@ declare global {
   }
 }
 
+const REGISTRY_PEERS = [
+            'https://gun.defucc.me/gun',
+            'https://gun.o8.is/gun',
+            'https://shogun-relay.scobrudot.dev/gun',
+            'https://relay.peer.ooo/gun',
+        ];
+
 export const useShogun = () => {
   const [shogun, setShogun] = useState<ShogunCore | null>(null);
   const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
@@ -28,10 +35,10 @@ export const useShogun = () => {
         console.log("freshRelays", freshRelays);
 
         const gun = Gun({
-          peers: freshRelays,
-          localStorage: true,
+          peers: REGISTRY_PEERS.concat(freshRelays),
+          localStorage: false,
           multicast: false,
-          radisk: true,
+          radisk: false,
           wire: true,
           rtc: {
             iceServers: [
@@ -63,7 +70,7 @@ export const useShogun = () => {
         console.error("Error initializing Shogun:", error);
         // Fallback to default peers if relay fetch fails
         const fallbackGun = Gun({
-          peers: ["https://shogun-relay.scobrudot.dev/gun", "https://peer.wallie.io/gun"],
+          peers: REGISTRY_PEERS,
           localStorage: false,
           multicast: false,
           radisk: false,
