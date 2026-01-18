@@ -16,6 +16,7 @@ interface HeaderProps {
   showDeleteButton?: boolean;
   onEditClick?: () => void;
   onDeleteClick?: () => void;
+  onExportKeypair?: () => void;
   theme: Theme;
   onToggleTheme: () => void;
   avatarUrl?: string;
@@ -33,6 +34,7 @@ export default function Header({
   showDeleteButton = false,
   onEditClick,
   onDeleteClick,
+  onExportKeypair,
   theme,
   onToggleTheme,
   avatarUrl,
@@ -152,14 +154,31 @@ export default function Header({
                 </button>
               )}
               {onLogoutClick && !showEditButton && !showDeleteButton && (
-                <button
-                  onClick={onLogoutClick}
-                  className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition text-xs sm:text-sm font-medium"
-                >
-                  <i className="fas fa-sign-out-alt mr-1"></i>
-                  <span className="hidden sm:inline">{t("header.logout")}</span>
-                  <span className="sm:hidden">Exit</span>
-                </button>
+                <>
+                  {onExportKeypair && (
+                    <button
+                      onClick={onExportKeypair}
+                      className="px-3 py-2 border rounded-full hover:bg-gray-50 transition text-xs sm:text-sm font-medium"
+                      style={{
+                        backgroundColor: 'var(--linktree-surface)',
+                        color: 'var(--linktree-text-primary)',
+                        borderColor: 'var(--linktree-outline)',
+                      }}
+                      title={t('header.exportKeypair')}
+                    >
+                      <i className="fas fa-key mr-1"></i>
+                      <span className="hidden sm:inline">{t('header.exportKeypair')}</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={onLogoutClick}
+                    className="px-2 py-1 bg-red-50 text-red-600 border border-red-200 rounded-full hover:bg-red-100 transition text-xs sm:text-sm font-medium"
+                  >
+                    <i className="fas fa-sign-out-alt mr-1"></i>
+                    <span className="hidden sm:inline">{t('header.logout')}</span>
+                    <span className="sm:hidden">Exit</span>
+                  </button>
+                </>
               )}
             </>
           ) : null}

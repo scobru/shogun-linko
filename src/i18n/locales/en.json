@@ -9,6 +9,8 @@
     "about": "About",
     "edit": "Edit",
     "delete": "Delete",
+    "exportKeypair": "Export Keypair",
+    "keypairCopied": "Keypair copied to clipboard!",
     "theme": {
       "light": "Light",
       "dark": "Dark"
@@ -80,7 +82,13 @@
     "loading": "Loading...",
     "enterCredentials": "Enter username and password",
     "invalidCredentials": "Invalid credentials",
-    "registrationError": "Error during registration"
+    "registrationError": "Error during registration",
+    "keypairLogin": "Login with Keypair",
+    "keypairPlaceholder": "Paste your keypair JSON here...",
+    "invalidKeypair": "Invalid keypair format",
+    "keypairLoginError": "Error logging in with keypair",
+    "useCredentials": "Use username/password",
+    "useKeypair": "Use keypair"
   },
   "shareModal": {
     "title": "Page Saved Successfully!",
@@ -276,6 +284,13 @@
       "title": "License",
       "description": "LINKO is released under the MIT License. You are free to use, modify, and distribute this software. This is experimental technology provided \"as is\" without warranties. Use at your own risk."
     }
+  },
+  "relaySync": {
+    "button": "Verify Sync",
+    "checking": "Checking...",
+    "synced": "Synced to {{count}} relays",
+    "noRelays": "No relays connected",
+    "title": "Relay Sync Status"
   }
 }
 

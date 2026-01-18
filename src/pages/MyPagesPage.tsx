@@ -4,6 +4,13 @@ import { useTranslation } from 'react-i18next';
 import type { UserInfo, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
+import {
+  getLinkoPages,
+  getLinkoSlugs,
+  loadAllPagesFromBothPaths,
+  getLegacyPages,
+  getLegacySlugs,
+} from '../utils/gun-paths';
 import Header from '../components/shared/Header';
 import { ShogunCore } from 'shogun-core';
 
@@ -48,23 +55,27 @@ export default function MyPagesPage({
     if (!shogun || !currentUser) return;
 
     setIsLoading(true);
-    const pages: PageData[] = [];
+    const pagesMap = new Map<string, PageData>();
 
-    // Load all pages and filter by author
-    shogun.gun.get('pages').map().once((pageData: any, pageId: string) => {
-      if (pageData && pageData.author === currentUser.pub && !pageData.deleted) {
-        pages.push({
-          id: pageId,
-          title: pageData.title || 'Senza Titolo',
-          slug: pageData.slug,
-          author: pageData.author,
-          createdAt: pageData.createdAt || Date.now(),
-          updatedAt: pageData.updatedAt || Date.now(),
-        });
+    // Load all pages from both paths and filter by author
+    loadAllPagesFromBothPaths(shogun.gun, (pageData, pageId, isLegacy) => {
+      if (pageData.author === currentUser.pub) {
+        // Use Map to deduplicate (prefer new path over legacy)
+        if (!pagesMap.has(pageId) || !isLegacy) {
+          pagesMap.set(pageId, {
+            id: pageId,
+            title: pageData.title || 'Senza Titolo',
+            slug: pageData.slug,
+            author: pageData.author,
+            createdAt: pageData.createdAt || Date.now(),
+            updatedAt: pageData.updatedAt || Date.now(),
+          });
+        }
       }
     });
 
     setTimeout(() => {
+      const pages = Array.from(pagesMap.values());
       // Sort by most recent first
       pages.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
       setMyPages(pages);
@@ -82,12 +93,15 @@ export default function MyPagesPage({
 
     setIsDeleting(true);
       try {
-        // Mark page as deleted
-        shogun.gun.get('pages').get(pageToDelete.id).put({ deleted: true, deletedAt: Date.now() });
+        // Mark page as deleted in both namespaces
+        const deletedData = { deleted: true, deletedAt: Date.now() };
+        getLinkoPages(shogun.gun).get(pageToDelete.id).put(deletedData);
+        getLegacyPages(shogun.gun).get(pageToDelete.id).put(deletedData);
         
-        // Delete slug mapping if exists
+        // Delete slug mapping if exists from both paths
         if (pageToDelete.slug) {
-          shogun.gun.get('slugs').get(pageToDelete.slug).put(null);
+          getLinkoSlugs(shogun.gun).get(pageToDelete.slug).put(null);
+          getLegacySlugs(shogun.gun).get(pageToDelete.slug).put(null);
         }
         
         // Remove from local state

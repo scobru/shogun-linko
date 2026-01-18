@@ -5,6 +5,13 @@ import type { UserInfo, ComponentData, ComponentType } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
 import { slugify, isValidSlug, isSlugAvailable } from '../utils/slugify';
+import {
+  getLinkoPages,
+  getLinkoSlugs,
+  getPageWithFallback,
+  loadAllPagesFromBothPaths,
+  checkSlugAvailability as checkSlugInBothPaths,
+} from '../utils/gun-paths';
 import Header from '../components/shared/Header';
 import AuthModal from '../components/shared/AuthModal';
 import ComponentWrapper from '../components/editor/ComponentWrapper';
@@ -16,6 +23,8 @@ interface EditorPageProps {
   isLoggedIn: boolean;
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signUp: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithKeypair: (keypairJson: string) => Promise<{ success: boolean; error?: string }>;
+  exportKeypair: () => string | null;
   logout: () => void;
   theme: Theme;
   toggleTheme: () => void;
@@ -27,6 +36,8 @@ export default function EditorPage({
   isLoggedIn,
   login,
   signUp,
+  loginWithKeypair,
+  exportKeypair,
   logout,
   theme,
   toggleTheme,
@@ -159,25 +170,19 @@ export default function EditorPage({
     if (currentPageId && shogun) {
       const deletedData = { deleted: true, deletedAt: Date.now() };
       shogun.gun.get(id).put(deletedData);
-      shogun.gun.get('pages').get(currentPageId).get('components').get(id).put(deletedData);
+      // Write to new namespace
+      getLinkoPages(shogun.gun).get(currentPageId).get('components').get(id).put(deletedData);
       console.log('Component marked as deleted in DB:', id);
     }
   };
 
-  const checkSlugAvailability = async (slug: string) => {
+  const checkSlugAvailabilityLocal = async (slug: string) => {
     if (!shogun || !slug) return true;
 
     setIsCheckingSlug(true);
     try {
-      return new Promise<boolean>((resolve) => {
-        shogun.gun.get('slugs').get(slug).once((existingPageId: string) => {
-          // Slug is available if it doesn't exist or if it's the current page
-          const available = !existingPageId || existingPageId === currentPageId;
-          resolve(available);
-        });
-        // Timeout after 1 second
-        setTimeout(() => resolve(true), 1000);
-      });
+      // Check both new and legacy paths for slug availability
+      return await checkSlugInBothPaths(shogun.gun, slug, currentPageId);
     } finally {
       setIsCheckingSlug(false);
     }
@@ -203,7 +208,7 @@ export default function EditorPage({
     }
 
     // Check database availability
-    const available = await checkSlugAvailability(sanitized);
+    const available = await checkSlugAvailabilityLocal(sanitized);
     if (!available) {
       setSlugError(t('editor.errors.alreadyUsed'));
     }
@@ -218,7 +223,15 @@ export default function EditorPage({
     setCurrentPageId(pageId);
 
     try {
-      const pageNode = shogun.gun.get('pages').get(pageId);
+      // Try new path first, then fallback to legacy
+      const pageResult = await getPageWithFallback(shogun.gun, pageId);
+      if (!pageResult) {
+        console.error('Page not found:', pageId);
+        return;
+      }
+
+      const { node: pageNode, isLegacy } = pageResult;
+      console.log(`Loading page from ${isLegacy ? 'legacy' : 'new'} path:`, pageId);
 
       pageNode.get('title').once((title: string) => {
         if (title) setPageTitle(title);
@@ -264,10 +277,13 @@ export default function EditorPage({
   const loadAllPages = () => {
     if (!shogun) return;
 
-    const pages: any[] = [];
-    shogun.gun.get('pages').map().once((pageData: any, pageId: string) => {
-      if (pageData && !pageData.deleted) {
-        pages.push({
+    const pagesMap = new Map<string, any>();
+    
+    // Load from both new and legacy paths
+    loadAllPagesFromBothPaths(shogun.gun, (pageData, pageId, isLegacy) => {
+      // Use Map to deduplicate (prefer new path over legacy)
+      if (!pagesMap.has(pageId) || !isLegacy) {
+        pagesMap.set(pageId, {
           id: pageId,
           title: pageData.title || 'Untitled',
           slug: pageData.slug,
@@ -279,6 +295,7 @@ export default function EditorPage({
     });
 
     setTimeout(() => {
+      const pages = Array.from(pagesMap.values());
       // Sort by most recent first
       pages.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
       setAllPages(pages);
@@ -289,7 +306,7 @@ export default function EditorPage({
         const index = pages.findIndex(page => page.id === pageParam);
         setCurrentPageIndex(index);
       }
-    }, 1000);
+    }, 1500);
   };
 
   const getPageUrl = (page: any) => {
@@ -345,7 +362,7 @@ export default function EditorPage({
         return;
       }
 
-      const available = await checkSlugAvailability(pageSlug);
+      const available = await checkSlugAvailabilityLocal(pageSlug);
       if (!available) {
         alert(t('editor.errors.alreadyInUse'));
         return;
@@ -361,7 +378,8 @@ export default function EditorPage({
 
     try {
       const pageId = currentPageId || 'page_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      const pageNode = shogun.gun.get('pages').get(pageId);
+      // Always write to new namespace: shogun/linko/pages
+      const pageNode = getLinkoPages(shogun.gun).get(pageId);
 
       const pageData: any = {
         title: pageTitle,
@@ -373,11 +391,12 @@ export default function EditorPage({
       // Add slug if provided
       if (pageSlug) {
         pageData.slug = pageSlug;
-        // Create slug->pageId mapping
-        shogun.gun.get('slugs').get(pageSlug).put(pageId);
+        // Create slug->pageId mapping in new namespace: shogun/linko/slugs
+        getLinkoSlugs(shogun.gun).get(pageSlug).put(pageId);
       }
 
       pageNode.put(pageData);
+      console.log('Saving page to shogun/linko/pages:', pageId);
 
       // Save only non-deleted components
       components.forEach((comp, index) => {
@@ -428,6 +447,25 @@ export default function EditorPage({
     }
   };
 
+  const handleLoginWithKeypair = async (keypairJson: string) => {
+    const result = await loginWithKeypair(keypairJson);
+    if (result.success) {
+      setShowAuthModal(false);
+    } else {
+      throw new Error(result.error || 'Login with keypair failed');
+    }
+  };
+
+  const handleExportKeypair = () => {
+    const keypair = exportKeypair();
+    if (keypair) {
+      navigator.clipboard.writeText(keypair);
+      alert('Keypair copied to clipboard!');
+    } else {
+      alert('No keypair available for export.');
+    }
+  };
+
   return (
     <div className={`container mx-auto p-3 sm:p-4 md:p-8 max-w-5xl pb-20`}>
       <Header
@@ -435,6 +473,7 @@ export default function EditorPage({
         isLoggedIn={isLoggedIn}
         onLoginClick={() => setShowAuthModal(true)}
         onLogoutClick={logout}
+        onExportKeypair={handleExportKeypair}
         theme={theme}
         onToggleTheme={toggleTheme}
         avatarUrl={avatarUrl}
@@ -706,14 +745,15 @@ export default function EditorPage({
         onClose={() => setShowAuthModal(false)}
         onLogin={handleLogin}
         onSignUp={handleSignUp}
+        onLoginWithKeypair={handleLoginWithKeypair}
       />
 
       {/* Share Modal */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/95 flex items-center justify-center p-4 z-[100] backdrop-blur-md">
           <div
-            className="rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center"
-            style={{ backgroundColor: 'var(--linktree-surface)' }}
+            className="rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center border"
+            style={{ backgroundColor: 'var(--linktree-surface)', borderColor: 'var(--linktree-outline)' }}
           >
             <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--linktree-text-primary)' }}>
               {t('shareModal.title')}

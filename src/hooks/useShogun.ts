@@ -15,11 +15,11 @@ declare global {
 }
 
 const REGISTRY_PEERS = [
-            'https://gun.defucc.me/gun',
-            'https://gun.o8.is/gun',
-            'https://shogun-relay.scobrudot.dev/gun',
-            'https://relay.peer.ooo/gun',
-        ];
+  'https://gun.defucc.me/gun',
+  'https://gun.o8.is/gun',
+  'https://shogun-relay.scobrudot.dev/gun',
+  'https://relay.peer.ooo/gun',
+];
 
 export const useShogun = () => {
   const [shogun, setShogun] = useState<ShogunCore | null>(null);
@@ -204,6 +204,65 @@ export const useShogun = () => {
     localStorage.removeItem("currentUserAlias");
   }, [shogun]);
 
+  const loginWithKeypair = useCallback(
+    async (keypairJson: string) => {
+      if (!shogun) return { success: false, error: "Shogun not initialized" };
+
+      try {
+        // Parse and validate keypair JSON
+        const pair = JSON.parse(keypairJson);
+
+        // Validate required fields
+        if (!pair.pub || !pair.priv || !pair.epub || !pair.epriv) {
+          return { success: false, error: "Invalid keypair format" };
+        }
+
+        // Use short alias from pub key
+        const alias = pair.pub.substring(0, 8) + "...";
+
+        // Login with the keypair using shogun-core
+        const result = await shogun.loginWithPair(alias, pair);
+
+        if (result.success && result.userPub) {
+          const userInfo: UserInfo = {
+            sea: { pub: result.userPub },
+            alias: result.username || result.userPub.substring(0, 8) + "...",
+            pub: result.userPub,
+          };
+          setCurrentUser(userInfo);
+          localStorage.setItem("currentUserPub", result.userPub);
+          localStorage.setItem("currentUserAlias", result.username || "");
+          // Store the keypair for export functionality
+          localStorage.setItem("shogun_keypair", JSON.stringify(pair));
+          return { success: true };
+        } else {
+          return { success: false, error: result.error || "Login with keypair failed" };
+        }
+      } catch (error) {
+        console.error("Login with keypair error:", error);
+        if (error instanceof SyntaxError) {
+          return { success: false, error: "Invalid JSON format" };
+        }
+        return { success: false, error: "Login with keypair failed" };
+      }
+    },
+    [shogun]
+  );
+
+  const exportKeypair = useCallback(() => {
+    try {
+      // Try to get keypair from localStorage
+      const storedKeypair = localStorage.getItem("shogun_keypair");
+      if (storedKeypair) {
+        return storedKeypair;
+      }
+      return null;
+    } catch (error) {
+      console.error("Export keypair error:", error);
+      return null;
+    }
+  }, []);
+
   return {
     shogun,
     currentUser,
@@ -211,6 +270,8 @@ export const useShogun = () => {
     login,
     signUp,
     logout,
+    loginWithKeypair,
+    exportKeypair,
     isLoggedIn: !!currentUser,
   };
 };

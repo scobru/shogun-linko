@@ -5,6 +5,15 @@ import type { UserInfo, ComponentData, PageData } from '../types';
 import type { Theme } from '../hooks/useTheme';
 import { useUserAvatar } from '../hooks/useUserAvatar';
 import { useFullscreen } from '../contexts/FullscreenContext';
+import {
+  getLinkoPages,
+  getLinkoSlugs,
+  resolveSlugWithFallback,
+  getPageWithFallback,
+  loadAllPagesFromBothPaths,
+  getLegacyPages,
+  getLegacySlugs,
+} from '../utils/gun-paths';
 import Header from '../components/shared/Header';
 import RenderedComponent from '../components/renderer/RenderedComponent';
 import { ShogunCore } from 'shogun-core';
@@ -38,15 +47,15 @@ export default function ViewerPage({
   const [currentPageIndex, setCurrentPageIndex] = useState(-1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [relaySyncResult, setRelaySyncResult] = useState<{ checking: boolean; count: number | null }>({ checking: false, count: null });
   const { isFullscreen, setIsFullscreen } = useFullscreen();
   const { avatarUrl, uploadAvatar } = useUserAvatar(shogun, currentUser);
 
   // Resolve slug to pageId if slug is provided
   useEffect(() => {
     if (slug && shogun && !pageId) {
-
-      // This is a custom slug route, resolve it to pageId
-      shogun.gun.get('slugs').get(slug).once((resolvedId: string) => {
+      // This is a custom slug route, resolve it to pageId using fallback
+      resolveSlugWithFallback(shogun.gun, slug).then((resolvedId) => {
         if (resolvedId) {
           setResolvedPageId(resolvedId);
         } else {
@@ -72,7 +81,16 @@ export default function ViewerPage({
 
     setIsLoading(true);
     try {
-      const pageNode = shogun.gun.get('pages').get(id);
+      // Try new path first, fallback to legacy
+      const pageResult = await getPageWithFallback(shogun.gun, id);
+      if (!pageResult) {
+        console.error('Page not found:', id);
+        setIsLoading(false);
+        return;
+      }
+
+      const { node: pageNode, isLegacy } = pageResult;
+      console.log(`Loading page from ${isLegacy ? 'legacy' : 'new'} path:`, id);
 
       pageNode.get('title').once((title: string) => {
         if (title) {
@@ -111,10 +129,13 @@ export default function ViewerPage({
   const loadAllPages = () => {
     if (!shogun) return;
 
-    const pages: PageData[] = [];
-    shogun.gun.get('pages').map().once((pageData: any, id: string) => {
-      if (pageData && pageData.title && !pageData.deleted) {
-        pages.push({
+    const pagesMap = new Map<string, PageData>();
+    
+    // Load from both new and legacy paths
+    loadAllPagesFromBothPaths(shogun.gun, (pageData, id, isLegacy) => {
+      // Use Map to deduplicate (prefer new path over legacy)
+      if (!pagesMap.has(id) || !isLegacy) {
+        pagesMap.set(id, {
           id,
           title: pageData.title,
           slug: pageData.slug,
@@ -126,11 +147,12 @@ export default function ViewerPage({
     });
 
     setTimeout(() => {
+      const pages = Array.from(pagesMap.values());
       pages.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       setAllPages(pages);
       const index = pages.findIndex(p => p.id === resolvedPageId);
       setCurrentPageIndex(index >= 0 ? index : -1);
-    }, 1000);
+    }, 1500);
   };
 
   const getPageUrl = (page: PageData) => {
@@ -164,12 +186,15 @@ export default function ViewerPage({
 
     setIsDeleting(true);
     try {
-      // Delete the page
-      shogun.gun.get('pages').get(resolvedPageId).put(null);
+      // Delete from new namespace
+      getLinkoPages(shogun.gun).get(resolvedPageId).put(null);
+      // Also delete from legacy path for cleanup
+      getLegacyPages(shogun.gun).get(resolvedPageId).put(null);
       
       // Delete slug mapping if exists
       if (slug) {
-        shogun.gun.get('slugs').get(slug).put(null);
+        getLinkoSlugs(shogun.gun).get(slug).put(null);
+        getLegacySlugs(shogun.gun).get(slug).put(null);
       }
       
       if (currentUser) {
@@ -222,6 +247,40 @@ export default function ViewerPage({
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  // Check how many relays have this page synced
+  const checkRelaySync = async () => {
+    if (!shogun || !resolvedPageId) return;
+    
+    setRelaySyncResult({ checking: true, count: null });
+    
+    try {
+      // Get connected peers from Gun's internal state
+      const gunInstance = shogun.gun as any;
+      const peers = gunInstance.back?.('opt.peers') || gunInstance._?.opt?.peers || {};
+      const peerUrls = Object.keys(peers);
+      
+      if (peerUrls.length === 0) {
+        setRelaySyncResult({ checking: false, count: 0 });
+        return;
+      }
+
+      // Count peers that are connected (have wire state)
+      let connectedCount = 0;
+      for (const url of peerUrls) {
+        const peer = peers[url];
+        // Check if peer is connected (has wire or is not disconnected)
+        if (peer && (peer.wire || !peer.off)) {
+          connectedCount++;
+        }
+      }
+
+      setRelaySyncResult({ checking: false, count: connectedCount > 0 ? connectedCount : peerUrls.length });
+    } catch (error) {
+      console.error('Error checking relay sync:', error);
+      setRelaySyncResult({ checking: false, count: 0 });
+    }
   };
 
   // If fullscreen, render fullscreen content
@@ -355,32 +414,62 @@ export default function ViewerPage({
         </div>
       )}
 
-      {/* Page Title */}
-      {pageTitle && (
-        <div className="max-w-sm sm:max-w-lg mx-auto mb-6">
-          <h1 className="text-2xl sm:text-3xl font-semibold break-words text-center" style={{ color: 'var(--linktree-text-primary)' }}>
-            {pageTitle}
-          </h1>
+      {/* Page Title Row with Action Buttons */}
+      <div className="max-w-sm sm:max-w-lg mx-auto mb-6">
+        <div className="flex items-center justify-center gap-4 flex-wrap">
+          {pageTitle && (
+            <h1 className="text-2xl sm:text-3xl font-semibold break-words text-center" style={{ color: 'var(--linktree-text-primary)' }}>
+              {pageTitle}
+            </h1>
+          )}
+          
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            {/* Verify Sync Button */}
+            <button
+              onClick={checkRelaySync}
+              disabled={relaySyncResult.checking}
+              className="px-3 py-2 rounded-full transition hover:scale-110 shadow-md text-xs sm:text-sm"
+              style={{
+                backgroundColor: relaySyncResult.count !== null 
+                  ? (relaySyncResult.count > 0 ? 'var(--linktree-success, #22c55e)' : 'var(--linktree-surface)')
+                  : 'var(--linktree-surface)',
+                color: relaySyncResult.count !== null && relaySyncResult.count > 0 ? 'white' : 'var(--linktree-text-primary)',
+                borderColor: 'var(--linktree-outline)',
+                border: '2px solid var(--linktree-outline)',
+              }}
+              title={t('relaySync.title')}
+            >
+              {relaySyncResult.checking ? (
+                <><i className="fas fa-spinner fa-spin mr-1"></i><span className="hidden sm:inline">{t('relaySync.checking')}</span></>
+              ) : relaySyncResult.count !== null ? (
+                <><i className="fas fa-check-circle mr-1"></i><span>{relaySyncResult.count}</span><span className="hidden sm:inline ml-1">relays</span></>
+              ) : (
+                <><i className="fas fa-sync-alt mr-1"></i><span className="hidden sm:inline">{t('relaySync.button')}</span></>
+              )}
+            </button>
+
+            {/* Fullscreen Button */}
+            <button
+              onClick={toggleFullscreen}
+              className="px-3 py-2 rounded-full transition hover:scale-110 shadow-md"
+              style={{
+                backgroundColor: 'var(--linktree-surface)',
+                color: 'var(--linktree-text-primary)',
+                borderColor: 'var(--linktree-outline)',
+                border: '2px solid var(--linktree-outline)',
+              }}
+              title={t('viewer.enterFullscreen')}
+            >
+              <i className="fas fa-expand-alt mr-1 sm:mr-2"></i>
+              <span className="hidden sm:inline text-xs">{t('viewer.enterFullscreen') || 'Schermo intero'}</span>
+            </button>
+          </div>
         </div>
-      )}
+      </div>
 
       {/* Page Content */}
-      <div className="max-w-sm sm:max-w-lg mx-auto relative">
-        {/* Fullscreen Button */}
-        <button
-          onClick={toggleFullscreen}
-          className="absolute -top-12 right-0 px-3 py-2 rounded-full transition hover:scale-110 shadow-md"
-          style={{
-            backgroundColor: 'var(--linktree-surface)',
-            color: 'var(--linktree-text-primary)',
-            borderColor: 'var(--linktree-outline)',
-            border: '2px solid var(--linktree-outline)',
-          }}
-          title={t('viewer.enterFullscreen')}
-        >
-          <i className="fas fa-expand-alt mr-1 sm:mr-2"></i>
-          <span className="hidden sm:inline text-xs">{t('viewer.enterFullscreen') || 'Schermo intero'}</span>
-        </button>
+      <div className="max-w-sm sm:max-w-lg mx-auto">
 
         <div className="space-y-2">
           {isLoading ? (
