@@ -251,11 +251,35 @@ export const useShogun = () => {
 
   const exportKeypair = useCallback(() => {
     try {
-      // Try to get keypair from localStorage
-      const storedKeypair = localStorage.getItem("shogun_keypair");
-      if (storedKeypair) {
-        return storedKeypair;
+      // 1. Try to get keypair from shogun_keypair (set by us)
+      let storedKeypair = localStorage.getItem("shogun_keypair");
+      if (storedKeypair) return storedKeypair;
+
+      // 2. Try localStorage 'pair'
+      storedKeypair = localStorage.getItem("pair");
+      if (storedKeypair) return storedKeypair;
+
+      // 3. Try sessionStorage 'pair'
+      storedKeypair = sessionStorage.getItem("pair");
+      if (storedKeypair) return storedKeypair;
+
+      // 4. Try localStorage 'gunSessionData' (often used by ShogunCore)
+      const gunSessionData = localStorage.getItem("gunSessionData");
+      if (gunSessionData) {
+        try {
+          const parsed = JSON.parse(gunSessionData);
+          if (parsed && parsed.pair) {
+            return JSON.stringify(parsed.pair);
+          }
+        } catch (e) {
+          console.warn("Error parsing gunSessionData", e);
+        }
       }
+
+      // 5. Try sessionStorage 'gun/session' or 'gun/pair'
+      storedKeypair = sessionStorage.getItem("gun/pair") || sessionStorage.getItem("gun/session");
+      if (storedKeypair) return storedKeypair;
+
       return null;
     } catch (error) {
       console.error("Export keypair error:", error);
