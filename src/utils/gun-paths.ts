@@ -50,27 +50,80 @@ export const getLegacySlugs = (gun: IGunInstance<any>) => {
 
 /**
  * Resolve a slug to pageId, checking new path first then legacy
+ * Uses retry logic to handle slow relay connections on page refresh
  */
 export const resolveSlugWithFallback = (
     gun: IGunInstance<any>,
     slug: string
 ): Promise<string | null> => {
     return new Promise((resolve) => {
-        // Try new path first
-        getLinkoSlugs(gun).get(slug).once((newPathId: string) => {
-            if (newPathId) {
-                resolve(newPathId);
-                return;
+        let resolved = false;
+        let newPathChecked = false;
+        let legacyPathChecked = false;
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        const checkComplete = () => {
+            if (resolved) return;
+
+            // Both paths checked and no result, try retry if available
+            if (newPathChecked && legacyPathChecked && retryCount < maxRetries) {
+                retryCount++;
+                newPathChecked = false;
+                legacyPathChecked = false;
+                console.log(`[Linko] Slug "${slug}" not found, retry ${retryCount}/${maxRetries}...`);
+
+                // Wait a bit before retrying to allow relay connections
+                setTimeout(() => {
+                    tryResolve();
+                }, 1000);
+            } else if (newPathChecked && legacyPathChecked) {
+                // All retries exhausted
+                resolve(null);
             }
+        };
 
-            // Fallback to legacy path
-            getLegacySlugs(gun).get(slug).once((legacyId: string) => {
-                resolve(legacyId || null);
+        const tryResolve = () => {
+            // Try new path first
+            getLinkoSlugs(gun).get(slug).once((newPathId: string) => {
+                if (resolved) return;
+
+                if (newPathId) {
+                    resolved = true;
+                    console.log(`[Linko] Slug "${slug}" resolved to ${newPathId} (new path)`);
+                    resolve(newPathId);
+                    return;
+                }
+
+                newPathChecked = true;
+
+                // Fallback to legacy path
+                getLegacySlugs(gun).get(slug).once((legacyId: string) => {
+                    if (resolved) return;
+
+                    if (legacyId) {
+                        resolved = true;
+                        console.log(`[Linko] Slug "${slug}" resolved to ${legacyId} (legacy path)`);
+                        resolve(legacyId);
+                        return;
+                    }
+
+                    legacyPathChecked = true;
+                    checkComplete();
+                });
             });
-        });
+        };
 
-        // Timeout after 2 seconds
-        setTimeout(() => resolve(null), 2000);
+        // Start resolution
+        tryResolve();
+
+        // Final timeout after 8 seconds (gives time for retries)
+        setTimeout(() => {
+            if (!resolved) {
+                console.warn(`[Linko] Slug "${slug}" resolution timed out after 8s`);
+                resolve(null);
+            }
+        }, 8000);
     });
 };
 
@@ -99,8 +152,8 @@ export const getPageWithFallback = (
             });
         });
 
-        // Timeout after 2 seconds
-        setTimeout(() => resolve(null), 2000);
+        // Timeout after 5 seconds (increased for slow relay connections)
+        setTimeout(() => resolve(null), 5000);
     });
 };
 
