@@ -108,8 +108,8 @@ export default function RenderedComponent({ component }: RenderedComponentProps)
             <img
               src={component.avatar}
               alt="Avatar"
-              className="w-20 h-20 rounded-full border-2 mx-auto mb-3 object-cover"
-              style={{ borderColor: 'var(--linktree-outline)' }}
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 mx-auto mb-4 object-cover shadow-xl transition-transform hover:scale-105"
+              style={{ borderColor: 'var(--linktree-surface)' }}
             />
           )}
           {component.name && (
@@ -137,17 +137,23 @@ export default function RenderedComponent({ component }: RenderedComponentProps)
           href={component.url || '#'}
           target="_blank"
           rel="noopener noreferrer"
-          className="block border rounded-lg p-3 mb-3 hover:shadow-md transition-all no-underline"
+          className="block w-full max-w-2xl mx-auto rounded-full p-4 mb-4 hover:shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] no-underline group"
           style={{
             backgroundColor: 'var(--linktree-surface)',
-            borderColor: 'var(--linktree-outline)',
+            border: '1px solid var(--linktree-outline)',
           }}
         >
-          <div className="flex items-center justify-between">
-            <span className="font-medium" style={{ color: 'var(--linktree-text-primary)' }}>
+          <div className="flex items-center justify-center relative">
+            <span className="font-semibold text-center w-full px-2 truncate" style={{ color: 'var(--linktree-text-primary)' }}>
               {component.title || 'Link'}
             </span>
-            <i className={component.icon || 'fas fa-external-link-alt'} style={{ color: 'var(--linktree-text-secondary)' }}></i>
+            {/* Optional: Add icon back if needed, but centering links usually looks cleaner without right-aligned icons unless specified. 
+                If we want an icon, it can be absolutely positioned or flexed. 
+                For now, keeping it simple centered as per typical Linktree style. 
+            */}
+             <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i className={component.icon || 'fas fa-external-link-alt'} style={{ color: 'var(--linktree-text-secondary)' }}></i>
+             </div>
           </div>
         </a>
       );

@@ -245,6 +245,11 @@ export default function ViewerPage({
     );
   }
 
+  // Force fullscreen on load
+  useEffect(() => {
+    setIsFullscreen(true);
+  }, [setIsFullscreen]);
+
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };

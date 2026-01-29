@@ -4,28 +4,69 @@
 
 /* Map LINKO variables to DaisyUI theme tokens */
 :root {
-  --linktree-primary: hsl(var(--p));
-  --linktree-secondary: hsl(var(--s));
-  --linktree-accent: hsl(var(--a));
-  --linktree-success: hsl(var(--su));
-  --linktree-warning: hsl(var(--wa));
-  --linktree-surface: hsl(var(--b2));
-  --linktree-surface-variant: hsl(var(--b3));
-  --linktree-outline: hsl(var(--bc) / 0.2);
-  --linktree-text-primary: hsl(var(--bc));
-  --linktree-text-secondary: hsl(var(--bc) / 0.7);
-  --linktree-text-disabled: hsl(var(--bc) / 0.5);
-  --linktree-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  --linktree-shadow-elevated: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  --linktree-background: hsl(var(--b1));
+  /* HSL Values for easy manipulation */
+  --linktree-primary: 0 0% 100%;       /* White */
+  --linktree-secondary: 0 0% 60%;      /* Grey */
+  --linktree-accent: 330 100% 50%;     /* Pink/Magenta pop */
+  --linktree-success: 154 100% 41%;    /* Mint Green */
+  --linktree-warning: 45 100% 50%;     /* Yellow */
+  
+  /* Semantic Colors */
+  --linktree-background: #111111;      /* Deep black/grey */
+  --linktree-surface: #1E1E1E;         /* Slightly lighter for cards/buttons */
+  --linktree-surface-hover: #2A2A2A;   /* Hover state */
+  --linktree-surface-variant: #252525; /* Secondary surface */
+  
+  --linktree-text-primary: #FFFFFF;
+  --linktree-text-secondary: #AAAAAA;
+  --linktree-text-disabled: #666666;
+  
+  --linktree-outline: rgba(255, 255, 255, 0.1);
+  
+  --linktree-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme='light'] {
+  --linktree-primary: 0 0% 0%;         /* Black */
+  --linktree-secondary: 0 0% 40%;      /* Dark Grey */
+  
+  --linktree-background: #F3F3F1;      /* Off-white */
+  --linktree-surface: #FFFFFF;         /* Pure white */
+  --linktree-surface-hover: #F0F0F0;   /* Light grey hover */
+  --linktree-surface-variant: #E5E5E5; 
+  
+  --linktree-text-primary: #111111;    /* Near black */
+  --linktree-text-secondary: #555555;  /* Grey text */
+  --linktree-text-disabled: #999999;
+  
+  --linktree-outline: rgba(0, 0, 0, 0.1);
+  
+  --linktree-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 body {
   background-color: var(--linktree-background);
+  /* Subtle gradient for depth - Dark for dark mode, Light for light mode handled by var? 
+     Actually, better to set the gradient based on theme or use a solid color if gradient is too complex to swap easily with one var.
+     Let's use a CSS variable for the gradient to make it swappable.
+  */
+  background-image: var(--linktree-background-gradient);
+  background-attachment: fixed;
+  
   color: var(--linktree-text-primary);
-  font-family: 'Google Sans Flex', sans-serif;
+  font-family: 'Inter', 'Google Sans Flex', sans-serif;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root {
+  /* ... previous vars ... */
+  --linktree-background-gradient: radial-gradient(circle at 50% 0%, #222222 0%, #111111 70%);
+}
+
+[data-theme='light'] {
+  --linktree-background-gradient: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #F3F3F1 70%);
 }
 
 /* Custom scrollbar */
